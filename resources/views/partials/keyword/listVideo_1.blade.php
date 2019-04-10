@@ -1,8 +1,6 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h2 class="panel-title">Video relate for {!! $keyword['keyword'] !!}</h2>
-    </div>
-    <div class="panel-body">
+<div class="card form-group">
+    <div class="card-body">
+        <h2 class="card-title">@lang('base.video_relate_for') {!! $keyword['keyword'] !!}</h2>
         <div class="row row-pad-5">
             @foreach(array_slice($keyword['video_relate'], $from, $to) as $videoRelate)
                 <?php
@@ -11,7 +9,7 @@
                 ?>
                 @if(!empty($video['title']))
                     <div class="col-md-3 col-xs-3">
-                        <a href="#"><img class="img-responsive" src="{!! $video['thumb'] !!}" alt="{!! $video['title'] !!}" title="{!! $video['title'] !!}"></a>
+                        <a href="#"><img class="mx-auto d-block" src="{!! $video['thumb'] !!}" alt="{!! $video['title'] !!}" title="{!! $video['title'] !!}"></a>
                         <?php
                         if ($video['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                             $updated_at= $video['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
@@ -20,7 +18,7 @@
                         }
                         ?>
                         <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
-                        <strong><a href="#">Cung cấp video {!! mb_substr($video['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE) !!}</a></strong><br>
+                        <strong><a href="{!! route('video.show',$video['yid']) !!}">{!! mb_substr($video['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE) !!}</a></strong><br>
                     </div>
                 @endif
             @endforeach

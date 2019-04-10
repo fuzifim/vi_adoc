@@ -28,28 +28,11 @@ class SchedulingController extends Controller
             return $rules;
         });
     }
-    public function updateSite(){
-        $getSite=DB::connection('mongodb')->collection('mongo_site')
-            ->where('update_site','exists',false)
-            ->limit(5)->get();
-        foreach($getSite as $item){
-            $title=mb_substr($item['title'], 0, $this->_max_length_title);
-            DB::connection('mongodb')->collection('mongo_site')
-                ->where('_id',(string)$item['_id'])
-                ->update(
-                    [
-                        'title'=>$title,
-                        'title_full'=>$item['title'],
-                        'base_64'=>base64_encode($title),
-                        'domain'=>$item['attribute']['domain'],
-                        'update_site'=>1
-                    ]
-                );
-        }
-    }
     public function crawVideoSearch(){
         $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
+            ->where('lang',env('LANG'))
             ->where('craw_next', 'step_4')
+            ->orderBy('order_number','desc')
             ->limit(1)->get();
         foreach ($getKeywords as $item) {
             $this->_keyword = $item['keyword'];
@@ -67,7 +50,7 @@ class SchedulingController extends Controller
                                 $imageUrl='https://img.youtube.com/vi/'.$videoItem['idYoutube'].'/0.jpg';
                                 $contents = file_get_contents($imageUrl);
                                 $filename=$name.'.jpg';
-                                Storage::put('tmp/'.$filename, $contents);
+                                Storage::disk('public')->put('tmp/'.$filename, $contents);
                                 $file_path = public_path().'/'.'tmp/'.$filename;
                                 $file_path_thumb = public_path().'/'.'tmp/thumb-'.$filename;
                                 $img=new Imagick($file_path);
@@ -192,7 +175,9 @@ class SchedulingController extends Controller
     public function crawImageSearch()
     {
         $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
+            ->where('lang',env('LANG'))
             ->where('craw_next', 'step_3')
+            ->orderBy('order_number','desc')
             ->limit(1)->get();
         foreach ($getKeywords as $item) {
             $this->_keyword = $item['keyword'];
@@ -213,7 +198,7 @@ class SchedulingController extends Controller
                             try {
                                 $contents = file_get_contents($imageItem['link']);
                                 $filename=$name.'.'.$extension;
-                                Storage::put('tmp/'.$filename, $contents);
+                                Storage::disk('public')->put('/tmp/'.$filename, $contents);
                                 $file_path = public_path().'/'.'tmp/'.$filename;
                                 $file_path_thumb = public_path().'/'.'tmp/thumb-'.$filename;
                                 $img=new Imagick($file_path);
@@ -309,17 +294,21 @@ class SchedulingController extends Controller
                             array_push($imageIdArray,(string)$check->id);
                         }
                     }
-                    DB::connection('mongodb')->collection('mongo_keyword')
-                        ->where('_id',(string)$item['_id'])
-                        ->update([
-                            'image_relate'=>$imageIdArray,
-                            'status_craw_image'=>'success',
-                            'craw_image_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                            'craw_next'=>'step_4',
-                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
-                        ]);
-                    echo 'insert craw image for '.$item['keyword'].'<p>';
+                    if(count($imageIdArray)){
+                        DB::connection('mongodb')->collection('mongo_keyword')
+                            ->where('_id',(string)$item['_id'])
+                            ->update([
+                                'image_relate'=>$imageIdArray,
+                                'status_craw_image'=>'success',
+                                'craw_image_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                'craw_next'=>'step_4',
+                                'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                            ]);
+                        echo 'insert craw image for '.$item['keyword'].'<p>';
+                    }else{
+                        echo 'Array id image empty '.$item['keyword'].'<p>';
+                    }
                 }else{
                     DB::connection('mongodb')->collection('mongo_keyword')
                         ->where('_id',(string)$item['_id'])
@@ -348,8 +337,8 @@ class SchedulingController extends Controller
     }
     public function keywordSuggest(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('craw_next','step_2')
             ->where('lang',env('LANG'))
+            ->where('craw_next','step_2')
             ->orderBy('order_number','desc')
             ->limit(1)->get();
         foreach($getKeywords as $item){
@@ -412,8 +401,8 @@ class SchedulingController extends Controller
     // Step 2 keyword
     public function keywordCraw(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('craw_next','exists',false)
             ->where('lang',env('LANG'))
+            ->where('craw_next','exists',false)
             ->orderBy('order_number','desc')
             ->orderBy('created_at','asc')
             ->limit(1)->get();

@@ -1,8 +1,6 @@
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h2 class="panel-title">Image relate for {!! $keyword['keyword'] !!}</h2>
-    </div>
-    <div class="panel-body">
+<div class="card form-group">
+    <div class="card-body">
+        <h2 class="card-title">@lang('base.image_relate_for') {!! $keyword['keyword'] !!}</h2>
         <div class="form-group">
             <?php $a=0; ?>
             @foreach($keyword['image_relate'] as $imageRelate)
@@ -14,8 +12,8 @@
                     $image=DB::connection('mongodb')->collection('mongo_image')
                         ->where('_id', (string)$imageRelate)->first();
                     ?>
-                    <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['image']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
-                    <h3 class="subtitle text-center"><span class="text-light" id="showImageLargeLink"><span class="text-light">{{$image['title']}}</span></span></h3>
+                    <img class="mx-auto d-block" id="showImageLarge" src="https:{{$image['attribute']['image']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
+                    <h3 class="subtitle text-center"><span class="" id="showImageLargeLink"><span class="">{{$image['title']}}</span></span></h3>
                     <?php break; ?>
                 @endif
             @endforeach
@@ -28,7 +26,7 @@
                         ->where('_id', (string)$imageRelate)->first();
                     ?>
                     <div class="col col-md-2 col-xs-2 mb-2">
-                        <a class="showImageLink" href="https:{{$image['attribute']['image']}}" data-image="https:{{$image['attribute']['image']}}" data-title="{{$image['title']}}" data-url=""><img class="img-responsive" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}"></a>
+                        <a class="showImageLink" href="https:{{$image['attribute']['image']}}" data-image="https:{{$image['attribute']['image']}}" data-title="{{$image['title']}}" data-url=""><img class="img-fluid" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}"></a>
                     </div>
                 @endforeach
             </div>

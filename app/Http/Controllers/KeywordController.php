@@ -27,7 +27,9 @@ class KeywordController extends ConstructController
                 $return=array(
                     'keyword'=>$getKeyword
                 );
-                return view('keyword.show', $return);
+                return Cache::store('memcached')->remember('k_'.$getKeyword['_id'], 5, function() use($return) {
+                    return view('keyword.show', $return)->render();
+                });
             }else{
                 $return=array(
                     'keyword'=>$this->_keyword
