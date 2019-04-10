@@ -58,7 +58,17 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
-
+        'mongodb' => [
+            'driver'   => 'mongodb',
+            'host'     => env('DB_HOST_MONGO', 'localhost'),
+            'port'     => env('DB_PORT_MONGO', 27017),
+            'database' => 'cungcap',
+            'username' => env('DB_USERNAME_MONGO'),
+            'password' => env('DB_PASSWORD_MONGO'),
+            'options'  => [
+                'database' => 'cungcap' // sets the authentication database required by mongo 3
+            ]
+        ],
         'pgsql' => [
             'driver' => 'pgsql',
             'host' => env('DB_HOST', '127.0.0.1'),

@@ -8,7 +8,16 @@
             @include('partials.sidebar')
             <div class="main-panel">
                 <div class="content-wrapper">
-                    content
+                    <a href="{!! route('keyword.of.page.add') !!}">Thêm từ khóa mới</a>
+                    @if(count($keywords))
+                    <ul class="list-group">
+                        @foreach($keywords as $item)
+                            <li class="list-group-item"><a href="{!! route('keyword.of.page.update',$item['_id']) !!}">{!! $item['keyword'] !!}</a></li>
+                        @endforeach
+                    </ul>
+                    @else
+                        <div class="alert alert-danger">Chưa có bất kỳ từ khóa nào cho trang này! </div>
+                    @endif
                 </div>
                 @include('includes.footer.footer')
             </div>

@@ -1,5 +1,7 @@
 <?php
 
+use App\Helpers\AppHelper;
+
 return [
 
     /*
@@ -80,7 +82,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env('LANG','vi'),
 
     /*
     |--------------------------------------------------------------------------
@@ -225,7 +227,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        'AppHelper' => App\Helpers\AppHelper::class,
     ],
 
 ];
