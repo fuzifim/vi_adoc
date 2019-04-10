@@ -1,0 +1,280 @@
+#!/bin/sh
+# chkconfig: - 80 12
+# description:  The memcached daemon is a network memory cache service.
+# processname: memcached
+BINNAME=memcached
+BIN=/usr/local/bin/memcached
+USER=memcached
+LOGGING='n'
+LOGFILE="/var/log/memcached.log"
+LOGFILEB="/var/log/memcached2.log"
+CON=2048
+BACKLOG=2048
+MAXREQ=200
+THREADS=4
+MINSP=72
+CHUNKF=1.25
+PORT1=11211
+PORT2=11212
+SOCKET_ENABLE=n
+SOCKETNAMEA='/var/run/memcached/memcached1.sock'
+SOCKETA="-s $SOCKETNAMEA -a 0766"
+SOCKETNAMEB='/var/run/memcached/memcached2.sock'
+SOCKETB="-s $SOCKETNAMEB -a 0766"
+MEMSIZE=8
+SERVERCOUNT=1
+SERVERIP='127.0.0.1'
+OPTIONS='-o slab_reassign,slab_automove'
+PIDA='/var/run/memcached/memcached1.pid'
+PIDB='/var/run/memcached/memcached2.pid'
+MEMCACHED_JEMALLOCUSE='n'
+JEMALLOC_LIBRARY='/usr/lib64/libjemalloc.so.1'
+
+# 1.4.25 new slab options
+# https://github.com/memcached/memcached/wiki/ReleaseNotes1425
+MEM_CURVER=$(/usr/local/bin/memcached -V | awk '{print $2}' | head -n1 | sed -e 's|\.|00|g')
+if [[ "$MEM_CURVER" -ge '10040025' ]]; then
+  if [[ "$MEM_CURVER" -ge '10040026' ]]; then
+    # memcached 1.4.26+ https://github.com/memcached/memcached/wiki/ReleaseNotes1426
+    OPTIONS='-o modern'
+  else
+    OPTIONS='-o slab_reassign,slab_automove,lru_crawler,lru_maintainer,maxconns_fast,hash_algorithm=murmur3'
+  fi
+fi
+
+if [ -f /proc/user_beancounters ]; then
+ulimit -s 256
+fi
+
+if [ ! -d /var/run/memcached/ ]; then
+        mkdir -p /var/run/memcached/
+        chmod 755 /var/run/memcached/ 2>&1 >/dev/null
+        chown -R ${USER}:${USER} /var/run/memcached/ 2>&1 >/dev/null
+fi
+
+if [[ "$SOCKET_ENABLE" = [yY] ]]; then
+        METHODA="$SOCKETA"
+        METHODB="$SOCKETB"
+else
+        METHODA="-l $SERVERIP -p $PORT1"
+        METHODB="-l $SERVERIP -p $PORT2"
+fi
+
+DEBUG='n'
+CPUSET='n'
+#############################
+
+setperm() {
+if [[ "$SOCKET_ENABLE" = [yY] ]]; then
+    chown -R ${USER}:nginx /var/run/memcached/ 2>&1 >/dev/null
+    if [ -S "$SOCKETNAMEA" ]; then
+        chown ${USER}:nginx "$SOCKETNAMEA" 2>&1 >/dev/null
+    fi
+    if [ -S "$SOCKETNAMEB" ]; then
+        chown ${USER}:nginx "$SOCKETNAMEB" 2>&1 >/dev/null
+    fi
+fi
+}
+
+processcheck() {
+        PROCESS=$(ps ax | grep memcached | grep -Ev '(/etc/init.d/memcached|grep|memcached status|memcached start|memcached stop|memcached restart|memcached_reinstall)')
+
+        if [ "$SERVERCOUNT" == '2' ]; then
+                if [[ ! -z "$PROCESS" || -f $PIDA ]] || [[ ! -z "$PROCESS" || -f $PIDB ]]; then
+                        CHECKM='yesmemcached'
+                else
+                        CHECKM='nomemcached'
+                fi
+        else
+                if [[ ! -z "$PROCESS" || -f $PIDA ]]; then
+                        CHECKM='yesmemcached'
+                else
+                        CHECKM='nomemcached'
+                fi
+        fi
+}
+
+setcpu() {
+if [ "$CPUSET" == 'y' ]; then
+        CORECHECK=$(taskset -pc $(pidof $BINNAME) | awk -F ': ' '{print $2}' | awk -F ',' '{print $3}')
+        if [ "$CORECHECK" == '3' ]; then
+        taskset -pc 3 $(pidof $BINNAME) 2>&1 >/dev/null
+        fi
+fi
+}
+
+twomem() {
+processcheck
+
+if [ "$DEBUG" == 'y' ]; then
+echo $CHECKM
+fi
+
+if [[ "$CHECKM" == 'nomemcached' ]]; then
+  echo "Memcached server started "
+  if [[ "$LOGGING" = [yY] ]]; then
+    if [[ "$MEMCACHED_JEMALLOCUSE" = [yY] && -f "$JEMALLOC_LIBRARY" ]]; then
+        LD_PRELOAD="$JEMALLOC_LIBRARY" $BIN -d -m $MEMSIZE $METHODA -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDA -vv > $LOGFILE 2>&1
+        LD_PRELOAD="$JEMALLOC_LIBRARY" $BIN -d -m $MEMSIZE $METHODB -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDB -vv > $LOGFILEB 2>&1
+    else
+        $BIN -d -m $MEMSIZE $METHODA -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDA -vv > $LOGFILE 2>&1
+        $BIN -d -m $MEMSIZE $METHODB -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDB -vv > $LOGFILEB 2>&1
+    fi
+  else
+    if [[ "$MEMCACHED_JEMALLOCUSE" = [yY] && -f "$JEMALLOC_LIBRARY" ]]; then
+      LD_PRELOAD="$JEMALLOC_LIBRARY" $BIN -d -m $MEMSIZE $METHODA -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDA
+      LD_PRELOAD="$JEMALLOC_LIBRARY" $BIN -d -m $MEMSIZE $METHODB -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDB
+    else
+      $BIN -d -m $MEMSIZE $METHODA -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDA
+      $BIN -d -m $MEMSIZE $METHODB -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDB
+    fi
+  fi
+else
+  echo "Memcached server already running "
+fi
+
+}
+
+onemem() {
+processcheck
+
+if [ "$DEBUG" == 'y' ]; then
+echo $CHECKM
+fi
+
+if [[ "$CHECKM" == 'nomemcached' ]]; then
+  echo "Memcached server started "
+  if [[ "$LOGGING" = [yY] ]]; then
+    if [[ "$MEMCACHED_JEMALLOCUSE" = [yY] && -f "$JEMALLOC_LIBRARY" ]]; then
+      LD_PRELOAD="$JEMALLOC_LIBRARY" $BIN -d -m $MEMSIZE $METHODA -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDA -vv > $LOGFILE 2>&1
+    else
+      $BIN -d -m $MEMSIZE $METHODA -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDA -vv > $LOGFILE 2>&1
+    fi
+  else
+    if [[ "$MEMCACHED_JEMALLOCUSE" = [yY] && -f "$JEMALLOC_LIBRARY" ]]; then
+      LD_PRELOAD="$JEMALLOC_LIBRARY" $BIN -d -m $MEMSIZE $METHODA -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDA
+    else
+      $BIN -d -m $MEMSIZE $METHODA -c $CON -b $BACKLOG -R $MAXREQ -t $THREADS -n $MINSP -f $CHUNKF -u $USER $OPTIONS -P $PIDA
+    fi
+  fi
+else
+  echo "Memcached server already running "
+fi
+}
+
+mstart() {
+if [ "$SERVERCOUNT" == '2' ]; then
+        twomem
+        setperm
+elif  [ "$SERVERCOUNT" == '1' ]; then
+        onemem
+        setcpu
+        setperm
+fi
+}
+
+mstop() {
+processcheck
+
+if [ "$DEBUG" == 'y' ]; then
+echo $CHECKM
+fi
+
+if [[ "$CHECKM" != 'nomemcached' ]]; then
+        echo "Memcached server stopped "
+        if [ "$SERVERCOUNT" == '2' ]; then
+                kill -9 $(pidof $BINNAME) 2>/dev/null
+                RETVALA=$?
+                if [ $RETVALA -eq 0 ] ; then
+                        rm -rf $PIDA 2>/dev/null
+                        rm -rf $SOCKETNAMEA 2>/dev/null
+                        rm -rf $PIDB 2>/dev/null
+                        rm -rf $SOCKETNAMEB 2>/dev/null
+                        kill -9 $(pidof $BINNAME) 2>/dev/null
+                fi
+                kill -9 $(cat $PIDB 2>/dev/null) 2>/dev/null
+                RETVALB=$?
+                if [ $RETVALB -eq 0 ] ; then
+                        rm -rf $PIDA 2>/dev/null
+                        rm -rf $SOCKETNAMEA 2>/dev/null
+                        rm -rf $PIDB 2>/dev/null
+                        rm -rf $SOCKETNAMEB 2>/dev/null
+                        kill -9 $(pidof $BINNAME) 2>/dev/null
+                fi
+                if [[ -f "$PIDA" || -f "$PIDB" ]]; then
+                        rm -rf $PIDA 2>/dev/null
+                        rm -rf $SOCKETNAMEA 2>/dev/null
+                        rm -rf $PIDB 2>/dev/null
+                        rm -rf $SOCKETNAMEB 2>/dev/null
+                fi                
+        else
+                kill -9 $(pidof $BINNAME) 2>/dev/null
+                RETVALA=$?
+                if [ $RETVALA -eq 0 ] ; then
+                        rm -rf $PIDA 2>/dev/null
+                        rm -rf $SOCKETNAMEA 2>/dev/null
+                        kill -9 $(pidof $BINNAME) 2>/dev/null
+                fi
+                if [ -f "$PIDA" ]; then
+                        rm -rf $PIDA 2>/dev/null
+                        rm -rf $SOCKETNAMEA 2>/dev/null
+                fi
+        fi
+else
+        # echo "Memcached server already stopped "
+        rm -rf $PIDA 2>/dev/null
+        rm -rf $SOCKETNAMEA 2>/dev/null
+        rm -rf $PIDB 2>/dev/null
+        rm -rf $SOCKETNAMEB 2>/dev/null
+        kill -9 $(pidof $BINNAME) 2>/dev/null
+fi
+}
+
+mstatus() {
+processcheck
+
+if [ "$DEBUG" == 'y' ]; then
+echo $CHECKM
+fi
+
+if [[ "$CHECKM" == 'nomemcached' ]]; then
+        echo "Memcached server not running "
+else
+        echo "Memcached server is running "
+fi
+}
+
+#############################
+
+if [[ "$SERVERCOUNT" == '2' && ! "$1" ]]; then
+        twomem
+elif  [[ "$SERVERCOUNT" == '1' && ! "$1" ]]; then
+        onemem
+        setcpu
+        #echo "1=${1} 2=${2}" #debug
+fi
+
+case "$1" in
+start)
+
+mstart
+
+;;
+stop) 
+
+mstop
+
+;;
+restart)             
+
+mstop
+sleep 2
+mstart
+
+;;
+status)
+
+mstatus
+
+;;
+esac
