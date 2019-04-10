@@ -24,8 +24,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->call('\App\Http\Controllers\SchedulingController@crawInfoDomain')->everyMinute();
+        $schedule->call('\App\Http\Controllers\SchedulingController@getWhoisDomain')->everyMinute();
+        $schedule->call('\App\Http\Controllers\SchedulingController@getRankDomain')->everyMinute();
+        $schedule->call('\App\Http\Controllers\SchedulingController@getIpRecord')->everyMinute();
+        $schedule->call('\App\Http\Controllers\SchedulingController@updateCountry')->everyMinute();
+        $schedule->call('\App\Http\Controllers\SchedulingController@keywordCraw')->cron('*/2 * * * *');
+        $schedule->call('\App\Http\Controllers\SchedulingController@keywordSuggest')->cron('*/2 * * * *');
+        $schedule->call('\App\Http\Controllers\SchedulingController@crawImageSearch')->cron('*/5 * * * *');
+        $schedule->call('\App\Http\Controllers\SchedulingController@crawVideoSearch')->cron('*/5 * * * *');
     }
 
     /**
