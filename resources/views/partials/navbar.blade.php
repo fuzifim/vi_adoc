@@ -28,10 +28,12 @@
                     <span class="nav-profile-name">{!! \Auth::user()->name !!}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                    @if(Auth::user()->id==1)
                     <a class="dropdown-item" href="{!! route('keyword.of.page') !!}">
                         <i class="mdi mdi-logout text-primary"></i>
                         @lang('base.keyword_of_page')
                     </a>
+                    @endif
                     <a class="dropdown-item" href="{!! route('logout') !!}">
                         <i class="mdi mdi-logout text-primary"></i>
                         @lang('base.logout')

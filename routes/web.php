@@ -31,4 +31,5 @@ Route::group(['prefix' => 'manager'], function () {
         ->name('keyword.of.page.update.request')
         ->middleware('auth');
 });
+Route::get('test', 'SchedulingController@keywordCraw');
 Route::get('/k/{slug}', 'KeywordController@show')->name('keyword.show');

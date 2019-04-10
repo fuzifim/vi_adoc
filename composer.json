@@ -14,7 +14,8 @@
         "laravel/tinker": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0",
         "guzzlehttp/guzzle": "^6.3",
-        "jenssegers/mongodb": "^3.5"
+        "jenssegers/mongodb": "^3.5",
+        "jeremykendall/php-domain-parser": "^5.3"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

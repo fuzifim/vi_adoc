@@ -200,16 +200,23 @@ class AppHelper
 		}
 		return true; 
 	}
-	public function makeDir($root='img'){
-		$dateFolder=[
-			'day'=>date('d', strtotime(Carbon::now()->format('Y-m-d H:i:s'))), 
-			'month'=>date('m', strtotime(Carbon::now()->format('Y-m-d H:i:s'))), 
-			'year'=>date('Y', strtotime(Carbon::now()->format('Y-m-d H:i:s')))
-		]; 
-		$path = $root.'/'.$dateFolder['year'].'/'.$dateFolder['month'].'/'.$dateFolder['day']; 
+    public function makeDir($root='img'){
+        $this->makeDirTmp();
+        $dateFolder=[
+            'day'=>date('d', strtotime(Carbon::now()->format('Y-m-d H:i:s'))),
+            'month'=>date('m', strtotime(Carbon::now()->format('Y-m-d H:i:s'))),
+            'year'=>date('Y', strtotime(Carbon::now()->format('Y-m-d H:i:s')))
+        ];
+        $path = $root.'/'.$dateFolder['year'].'/'.$dateFolder['month'].'/'.$dateFolder['day'];
 
-		return $path; 
-	}
+        return $path;
+    }
+    public function makeDirTmp(){
+        $path = public_path(). '/tmp';
+        if(!File::exists($path)) {
+            File::makeDirectory($path, $mode = 0777, true, true);
+        }
+    }
 	public static function price($price)
 	{
 		if(is_numeric($price)){

@@ -10,8 +10,15 @@ class ConstructController extends Controller
 {
     public $_parame;
     public $_keywordPrimary;
+    public $_rulesDomain;
     public function __construct(){
         $this->_parame=Route::current()->parameters();
+        $this->_rulesDomain = Cache::store('file')->rememberForever('rulesDomain', function()
+        {
+            $pdp_url = public_path('data/public_suffix_list.dat.txt');
+            $rules = \Pdp\Rules::createFromPath($pdp_url);
+            return $rules;
+        });
         $this->_keywordPrimary = Cache::store('memcached')->remember('keyword_primary', 1, function()
         {
             return DB::connection('mongodb')->collection('mongo_keyword')
