@@ -10,7 +10,7 @@ use GuzzleHttp\Client;
 use Cache;
 use Storage;
 use File;
-use AppHelper; 
+use AppHelper;
 
 class SchedulingController extends Controller
 {

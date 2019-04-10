@@ -1,6 +1,6 @@
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h2 class="panel-title">Site relate for {!! $keyword['keyword'] !!}</h2>
+        <h2 class="panel-title">@lang('base.site_relate_for_keyword') {!! $keyword['keyword'] !!}</h2>
     </div>
     <ul class="list-group">
         @foreach($keyword['site_relate'] as $siteRelate)
@@ -21,7 +21,7 @@
                     <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
                     <span>{!! $site['description'] !!}</span><br>
                     <span>{!! $site['link'] !!}</span><br>
-                    <i class="glyphicon glyphicon-globe"></i> <a href="http://{!! $site['domain'] !!}.d.{!! config('app.url') !!}" target="blank">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
+                    <i class="glyphicon glyphicon-globe"></i> <a href="#" target="blank">{!! AppHelper::instance()->renameBlacklistWord($site['domain']) !!}</a>
                 </li>
             @endif
         @endforeach

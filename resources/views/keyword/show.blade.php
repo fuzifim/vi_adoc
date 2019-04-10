@@ -26,6 +26,20 @@
             @include('partials.sidebar')
             <div class="main-panel">
                 <div class="content-wrapper">
+                    <div class="pageheader form-group">
+                        <h1><strong>{!! $keyword['keyword'] !!}</strong></h1>
+                        <?php
+                        if ($keyword['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+                            $updated_at= $keyword['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s');
+                        }else{
+                            $updated_at= $keyword['updated_at'];
+                        }
+                        ?>
+                        <small>@lang('base.updated_at') {!! $updated_at !!}</small> @if(!empty($keyword['view']))<small><strong>@lang('base.views'): {!! $keyword['view'] !!}</strong></small>@endif
+                        @if(!empty($keyword['parent']))
+                            <p>Parent <a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['parent'])))}}">{!! $keyword['parent'] !!}</a></p>
+                        @endif
+                    </div>
                     <div class="row row-pad-5">
                         <div class="col-md-12">
                             @if($showEmpty==true)
