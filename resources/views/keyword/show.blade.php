@@ -37,7 +37,7 @@
                         ?>
                         <small>@lang('base.updated_at') {!! $updated_at !!}</small> @if(!empty($keyword['view']))<small><strong>@lang('base.views'): {!! $keyword['view'] !!}</strong></small>@endif
                         @if(!empty($keyword['parent']))
-                            <p>Parent <a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['parent'])))}}">{!! $keyword['parent'] !!}</a></p>
+                            <p>Parent <a href="{!! route('keyword.show',AppHelper::instance()->characterReplaceUrl($keyword['parent'])) !!}">{!! $keyword['parent'] !!}</a></p>
                         @endif
                     </div>
                     <div class="row row-pad-5">
@@ -74,13 +74,13 @@
                             @endif
                             @if(!empty($keyword['keyword_relate']) && count($keyword['keyword_relate'])>0)
                                 <div class="form-group">
-                                    <p><strong>Keyword relate for {!! $keyword['keyword'] !!}</strong></p>
+                                    <p><strong>@lang('base.keyword_relate_for') {!! $keyword['keyword'] !!}</strong></p>
                                     @foreach($keyword['keyword_relate'] as $keywordRelate)
                                         <?php
                                         $keywordRe=DB::connection('mongodb')->collection('mongo_keyword')
                                             ->where('_id', (string)$keywordRelate)->first();
                                         ?>
-                                        <span><a class="badge" href="#">{!! $keywordRe['keyword'] !!}</a></span>
+                                        <span><a class="badge" href="{!! route('keyword.show',AppHelper::instance()->characterReplaceUrl($keywordRe['keyword'])) !!}">{!! $keywordRe['keyword'] !!}</a></span>
                                     @endforeach
                                 </div>
                             @endif

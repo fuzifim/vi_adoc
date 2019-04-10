@@ -7,5 +7,6 @@ return [
     'search'=>'Tìm kiếm',
     'site_relate_for_keyword'=>'Trang liên quan đến',
     'updated_at'=>'Cập nhật lúc',
-    'views'=>'Lượt xem'
+    'views'=>'Lượt xem',
+    'keyword_relate_for'=>'Từ khóa liên quan đến'
 ];
