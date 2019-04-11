@@ -22,7 +22,7 @@ class ConstructController extends Controller
         $this->_keywordPrimary = Cache::store('memcached')->remember('keyword_primary', 1, function()
         {
             return DB::connection('mongodb')->collection('mongo_keyword')
-                ->where('lang',env('LANG'))
+                ->where('lang',config('app.locale'))
                 ->where('parent',null)
                 ->simplePaginate(10);
         });
