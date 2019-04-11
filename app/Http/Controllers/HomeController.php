@@ -5,6 +5,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
+use Cache;
 
 class HomeController extends ConstructController
 {
@@ -14,8 +15,17 @@ class HomeController extends ConstructController
     }
     public function index()
     {
-        $getDb=DB::connection('mongodb')->collection('mongo_keyword')->where('_id','5cad8cdcd1d2aa14005e5a52')->first();
-        //dd($this->_keywordPrimary);
-        return view('welcome');
+        $keywordNewUpdate=Cache::store('memcached')->remember('newKeyword', 1, function()
+        {
+            return DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('lang',config('app.locale'))
+                ->where('craw_next','exists',true)
+                ->orderBy('updated_at','desc')
+                ->limit(120)->get();
+        });
+        $data=array(
+            'newKeyword'=>$keywordNewUpdate
+        );
+        return view('welcome',$data);
     }
 }

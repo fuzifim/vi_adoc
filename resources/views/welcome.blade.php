@@ -8,14 +8,22 @@
             @include('partials.sidebar')
             <div class="main-panel">
                 <div class="content-wrapper">
-                    Bộ tài liệu lưu trữ thông tin sản phẩm, dịch vụ, phương tiện, ngành nghề thuộc các lĩnh vực, các khu vực, các quốc gia!
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-description">
+                                Bộ tài liệu lưu trữ thông tin sản phẩm, dịch vụ, phương tiện, ngành nghề thuộc các lĩnh vực, các khu vực, các quốc gia!</p>
+                            <h3 class="card-title">Từ khóa mới cập nhật</h3>
+                            @if(count($newKeyword))
+                                @foreach($newKeyword as $item) 
+                                    <a class="badge badge-secondary mb-1" href="{!! route('keyword.show',AppHelper::instance()->characterReplaceUrl($item['keyword'])) !!}">{!! $item['keyword'] !!}</a>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
                 </div>
                 @include('includes.footer.footer')
             </div>
-            <!-- main-panel ends -->
         </div>
-        <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
 @endsection
 @include('includes.footer.script.script_default')
