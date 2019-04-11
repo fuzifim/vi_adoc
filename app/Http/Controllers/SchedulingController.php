@@ -431,7 +431,7 @@ class SchedulingController extends Controller
                             'craw_at'=>Carbon::now()
                         ]);
                         $result=$this->getSearchYahooFrom();
-                    }else if($getRoleSite->site=='yahoo' && Carbon::parse($getRoleSite->craw_at)->addSecond(60)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
+                    }else if($getRoleSite->site=='yahoo'){
                         DB::table('role_change_site_craw')->update([
                             'site'=>'bing',
                             'craw_at'=>Carbon::now()
