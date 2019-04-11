@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@yield('title')</title>
     <meta name="description" content="@yield('description')">
+    <meta property="og:title" content="@yield('title')">
+    <meta property="og:description" content="@yield('description')">
+    <meta property="og:image" content="@yield('image')" />
     <link rel="icon" href="{{ asset('favicon.png') }}" />
     @section('header_css')
     @show
