@@ -714,21 +714,7 @@ class SchedulingController extends Controller
     }
     public function crawInfoDomain(){
         $getDomain=DB::connection('mongodb')->collection('mongo_domain')
-            ->where(function($query)
-            {
-                $query->where('status', '!=','active')
-                    ->where('craw_next','exists',false);
-            })
-            ->orWhere(function($query)
-            {
-                $query->where('title', '')
-                    ->where('craw_next','exists',false);
-            })
-            ->orWhere(function($query)
-            {
-                $query->where('title', null)
-                    ->where('craw_next','exists',false);
-            })
+            ->where('craw_next','exists',false)
             ->limit(3)->get();
         foreach($getDomain as $domain){
             $this->_domain=$domain['domain'];
