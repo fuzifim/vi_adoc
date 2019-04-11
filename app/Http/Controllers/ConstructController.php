@@ -24,7 +24,7 @@ class ConstructController extends Controller
             return DB::connection('mongodb')->collection('mongo_keyword')
                 ->where('lang',config('app.locale'))
                 ->where('parent',null)
-                ->simplePaginate(10);
+                ->simplePaginate(20);
         });
         $this->viewShare();
     }
