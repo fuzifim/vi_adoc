@@ -31,7 +31,7 @@ Route::group(['prefix' => 'manager'], function () {
         ->name('keyword.of.page.update.request')
         ->middleware('auth');
 });
-Route::get('test', 'SchedulingController@crawVideoSearch');
+Route::get('test', 'SchedulingController@keywordCraw');
 Route::get('/k/{slug}', 'KeywordController@show')->name('keyword.show');
 Route::get('/d/{domain}', 'DomainController@show')->name('domain.show');
 Route::get('/v/{yid}', 'VideoController@show')->name('video.show');

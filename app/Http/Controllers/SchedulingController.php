@@ -30,7 +30,7 @@ class SchedulingController extends Controller
     }
     public function crawVideoSearch(){
         $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',env('LANG'))
+            ->where('lang',config('app.locale'))
             ->where('craw_next', 'step_4')
             ->orderBy('order_number','desc')
             ->limit(1)->get();
@@ -175,8 +175,9 @@ class SchedulingController extends Controller
     public function crawImageSearch()
     {
         $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',env('LANG'))
+            ->where('lang',config('app.locale'))
             ->where('craw_next', 'step_3')
+            ->orderBy('created_at','asc')
             ->orderBy('order_number','desc')
             ->limit(1)->get();
         foreach ($getKeywords as $item) {
@@ -337,8 +338,9 @@ class SchedulingController extends Controller
     }
     public function keywordSuggest(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',env('LANG'))
+            ->where('lang',config('app.locale'))
             ->where('craw_next','step_2')
+            ->orderBy('created_at','asc')
             ->orderBy('order_number','desc')
             ->limit(1)->get();
         foreach($getKeywords as $item){
@@ -362,7 +364,7 @@ class SchedulingController extends Controller
                                         'description'=>'',
                                         'image'=>'',
                                         'status'=>'pending',
-                                        'lang'=>env('LANG'),
+                                        'lang'=>config('app.locale'),
                                         'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                                         'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
                                     ]
@@ -401,7 +403,7 @@ class SchedulingController extends Controller
     // Step 2 keyword
     public function keywordCraw(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',env('LANG'))
+            ->where('lang',config('app.locale'))
             ->where('craw_next','exists',false)
             ->orderBy('order_number','desc')
             ->orderBy('created_at','asc')
