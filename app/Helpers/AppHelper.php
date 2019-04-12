@@ -73,6 +73,7 @@ class AppHelper
         $string=str_replace('%', 'JQ==', $string);
         $string=str_replace('&', 'Jg==', $string);
         $string=str_replace('$', 'JA==', $string);
+        $string=str_replace(':', 'Og==', $string);
         $string=preg_replace('/([+])\\1+/', '$1',str_replace(' ','+',$string));
         return $string;
     }
@@ -94,6 +95,7 @@ class AppHelper
         $string=str_replace('JQ==', '%', $string);
         $string=str_replace('Jg==', '&', $string);
         $string=str_replace('JA==', '$', $string);
+        $string=str_replace('Og==', ':', $string);
         return $string;
     }
 	function addNofollow($html, $skip = null,$linkJson=false) {

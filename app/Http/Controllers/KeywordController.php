@@ -37,10 +37,16 @@ class KeywordController extends ConstructController
                 return view('keyword.notfound',$return);
             }
         }else{
-            $return=array(
-                'keyword'=>$this->_keyword
-            );
-            return view('keyword.notfound',$return);
+            $parsedUrl=parse_url($this->_keyword);
+            $domain=$this->_rulesDomain->resolve($parsedUrl['host']);
+            if(!empty($domain->getRegistrableDomain())){
+                return redirect()->route('domain.show', $domain->getRegistrableDomain());
+            }else{
+                $return=array(
+                    'keyword'=>$this->_keyword
+                );
+                return view('keyword.notfound',$return);
+            }
         }
     }
     public function keyword_of_page()
