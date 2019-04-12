@@ -30,7 +30,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="lang">Lang</label>
-                                        <input type="text" class="form-control" id="lang" placeholder="lang" value="{!! env('LANG') !!}" readonly>
+                                        <input type="text" class="form-control" id="lang" placeholder="lang" value="{!! config('app.locale') !!}" readonly>
                                     </div>
                                     <button type="submit" class="btn btn-primary mr-2">Lưu</button>
                                     <button class="btn btn-light">Cancel</button>

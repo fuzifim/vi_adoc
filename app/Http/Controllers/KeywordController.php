@@ -46,7 +46,7 @@ class KeywordController extends ConstructController
     public function keyword_of_page()
     {
         $getKeyword=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',env('LANG'))
+            ->where('lang',config('app.locale'))
             ->where('parent',null)
             ->simplePaginate(10);
         $data=array(
@@ -93,7 +93,7 @@ class KeywordController extends ConstructController
                             'image'=>'',
                             'status'=>'pending',
                             'order_number'=>(!empty($request->orderNumber)?$request->orderNumber:0),
-                            'lang'=>env('LANG'),
+                            'lang'=>config('app.locale'),
                             'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                             'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
                         ]

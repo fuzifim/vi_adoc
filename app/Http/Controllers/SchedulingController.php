@@ -30,7 +30,7 @@ class SchedulingController extends Controller
     }
     public function crawVideoSearch(){
         $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',env('LANG'))
+            ->where('lang',config('app.locale'))
             ->where('craw_next', 'step_4')
             ->orderBy('order_number','desc')
             ->limit(1)->get();
@@ -175,8 +175,9 @@ class SchedulingController extends Controller
     public function crawImageSearch()
     {
         $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',env('LANG'))
+            ->where('lang',config('app.locale'))
             ->where('craw_next', 'step_3')
+            ->orderBy('created_at','asc')
             ->orderBy('order_number','desc')
             ->limit(1)->get();
         foreach ($getKeywords as $item) {
@@ -337,8 +338,9 @@ class SchedulingController extends Controller
     }
     public function keywordSuggest(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',env('LANG'))
+            ->where('lang',config('app.locale'))
             ->where('craw_next','step_2')
+            ->orderBy('created_at','asc')
             ->orderBy('order_number','desc')
             ->limit(1)->get();
         foreach($getKeywords as $item){
@@ -362,7 +364,7 @@ class SchedulingController extends Controller
                                         'description'=>'',
                                         'image'=>'',
                                         'status'=>'pending',
-                                        'lang'=>env('LANG'),
+                                        'lang'=>config('app.locale'),
                                         'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                                         'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
                                     ]
@@ -401,7 +403,7 @@ class SchedulingController extends Controller
     // Step 2 keyword
     public function keywordCraw(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',env('LANG'))
+            ->where('lang',config('app.locale'))
             ->where('craw_next','exists',false)
             ->orderBy('order_number','desc')
             ->orderBy('created_at','asc')
@@ -412,7 +414,7 @@ class SchedulingController extends Controller
                 $getRoleSite=DB::table('role_change_site_craw')->first();
                 $result=array();
                 if(empty($getRoleSite->site)){
-                    DB::table('role_change_site_craw')->insertGetId(
+                    $idgetRole=DB::table('role_change_site_craw')->insertGetId(
                         [
                             'site'=>'google',
                             'craw_at'=>Carbon::now(),
@@ -420,104 +422,107 @@ class SchedulingController extends Controller
                             'updated_at'=>Carbon::now()
                         ]
                     );
-                    $result=$this->getSearchGoogleFrom();
-                }else if($getRoleSite->site=='google' && Carbon::parse($getRoleSite->craw_at)->addSecond(60)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
-                    DB::table('role_change_site_craw')->update([
-                        'site'=>'yahoo',
-                        'craw_at'=>Carbon::now()
-                    ]);
-                    $result=$this->getSearchYahooFrom();
-                }else if($getRoleSite->site=='yahoo' && Carbon::parse($getRoleSite->craw_at)->addSecond(60)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
-                    DB::table('role_change_site_craw')->update([
-                        'site'=>'bing',
-                        'craw_at'=>Carbon::now()
-                    ]);
-                    $result=$this->getSearchBingFrom();
-                }else if($getRoleSite->site=='bing' && Carbon::parse($getRoleSite->craw_at)->addSecond(60)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
-                    DB::table('role_change_site_craw')->update([
-                        'site'=>'google',
-                        'craw_at'=>Carbon::now()
-                    ]);
-                    $result=$this->getSearchGoogleFrom();
+                    $getRoleSite=DB::table('role_change_site_craw')->where('id',$idgetRole)->first();
                 }
-                if(is_array($result) && !empty($result['result']) && $result['result']=='success' && count($result['data'])){
-                    $siteArray=[];
-                    foreach ($result['data'] as $data){
-                        if(!empty($data['title']) && !empty($data['domain'])){
-                            $title=AppHelper::instance()->convertToUTF8(mb_substr($data['title'], 0, $this->_max_length_title));
-                            $checkSite=DB::connection('mongodb')->collection('mongo_site')
-                                ->where('base_64',base64_encode($title))
-                                ->where('domain',$data['domain'])
-                                ->first();
-                            if(empty($checkSite['title'])){
-                                $siteId=DB::connection('mongodb')->collection('mongo_site')
-                                    ->insertGetId(
-                                        [
-                                            'title' => $title,
-                                            'base_64' => base64_encode($title),
-                                            'title_full'=>AppHelper::instance()->convertToUTF8($data['title']),
-                                            'link' => $data['linkFull'],
-                                            'domain'=>$data['domain'],
-                                            'description'=>AppHelper::instance()->convertToUTF8($data['description']),
-                                            'attribute'=>[],
-                                            'view'=>0,
-                                            'status'=>'pending',
-                                            'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
-                                        ]
-                                    );
-                                array_push($siteArray,(string)$siteId);
-                                echo 'insert site '.$data['linkFull'].' have count '.count($result['data']).'<p>';
-                            }else{
-                                array_push($siteArray,(string)$checkSite['_id']);
-                                echo 'update site relate '.$checkSite['link'].' have count '.count($result['data']).'<p>';
-                            }
-                            $checkDomain=DB::connection('mongodb')->collection('mongo_domain')
-                                ->where('base_64',base64_encode($data['domain']))->first();
-                            if(empty($checkDomain['domain'])){
-                                DB::connection('mongodb')->collection('mongo_domain')
-                                    ->insertGetId(
-                                        [
-                                            'domain' => $data['domain'],
-                                            'base_64' => base64_encode($data['domain']),
-                                            'title'=>'',
-                                            'description'=>'',
-                                            'keywords'=>'',
-                                            'image'=>'',
-                                            'attribute'=>[],
-                                            'view'=>0,
-                                            'status'=>'pending',
-                                            'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
-                                        ]
-                                    );
-                                echo 'insert domain '.$data['domain'].'<p>';
+                if(!empty($getRoleSite->site) && Carbon::parse($getRoleSite->craw_at)->addSecond(60)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
+                    if($getRoleSite->site=='google' ){
+                        DB::table('role_change_site_craw')->update([
+                            'site'=>'yahoo',
+                            'craw_at'=>Carbon::now()
+                        ]);
+                        $result=$this->getSearchYahooFrom();
+                    }else if($getRoleSite->site=='yahoo'){
+                        DB::table('role_change_site_craw')->update([
+                            'site'=>'bing',
+                            'craw_at'=>Carbon::now()
+                        ]);
+                        $result=$this->getSearchBingFrom();
+                    }else if($getRoleSite->site=='bing'){
+                        DB::table('role_change_site_craw')->update([
+                            'site'=>'google',
+                            'craw_at'=>Carbon::now()
+                        ]);
+                        $result=$this->getSearchGoogleFrom();
+                    }
+                    if(is_array($result) && !empty($result['result']) && $result['result']=='success' && count($result['data'])){
+                        $siteArray=[];
+                        foreach ($result['data'] as $data){
+                            if(!empty($data['title']) && !empty($data['domain'])){
+                                $title=AppHelper::instance()->convertToUTF8(mb_substr($data['title'], 0, $this->_max_length_title));
+                                $checkSite=DB::connection('mongodb')->collection('mongo_site')
+                                    ->where('base_64',base64_encode($title))
+                                    ->where('domain',$data['domain'])
+                                    ->first();
+                                if(empty($checkSite['title'])){
+                                    $siteId=DB::connection('mongodb')->collection('mongo_site')
+                                        ->insertGetId(
+                                            [
+                                                'title' => $title,
+                                                'base_64' => base64_encode($title),
+                                                'title_full'=>AppHelper::instance()->convertToUTF8($data['title']),
+                                                'link' => $data['linkFull'],
+                                                'domain'=>$data['domain'],
+                                                'description'=>AppHelper::instance()->convertToUTF8($data['description']),
+                                                'attribute'=>[],
+                                                'view'=>0,
+                                                'status'=>'pending',
+                                                'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                                'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                            ]
+                                        );
+                                    array_push($siteArray,(string)$siteId);
+                                    echo 'insert site '.$data['linkFull'].' have count '.count($result['data']).'<p>';
+                                }else{
+                                    array_push($siteArray,(string)$checkSite['_id']);
+                                    echo 'update site relate '.$checkSite['link'].' have count '.count($result['data']).'<p>';
+                                }
+                                $checkDomain=DB::connection('mongodb')->collection('mongo_domain')
+                                    ->where('base_64',base64_encode($data['domain']))->first();
+                                if(empty($checkDomain['domain'])){
+                                    DB::connection('mongodb')->collection('mongo_domain')
+                                        ->insertGetId(
+                                            [
+                                                'domain' => $data['domain'],
+                                                'base_64' => base64_encode($data['domain']),
+                                                'title'=>'',
+                                                'description'=>'',
+                                                'keywords'=>'',
+                                                'image'=>'',
+                                                'attribute'=>[],
+                                                'view'=>0,
+                                                'status'=>'pending',
+                                                'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                                'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                            ]
+                                        );
+                                    echo 'insert domain '.$data['domain'].'<p>';
+                                }
                             }
                         }
+                        DB::connection('mongodb')->collection('mongo_keyword')
+                            ->where('_id',(string)$item['_id'])
+                            ->update([
+                                'site_craw_content'=>AppHelper::instance()->convertToUTF8($result['content']),
+                                'site_relate'=>$siteArray,
+                                'status_craw_site'=>'success',
+                                'craw_site_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                'craw_next'=>'step_2',
+                                'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                            ]);
+                        echo 'craw keyword success '.$item['keyword'].'<p>';
+                    }else if($result['result']=='error'){
+                        DB::connection('mongodb')->collection('mongo_keyword')
+                            ->where('_id',(string)$item['_id'])
+                            ->update([
+                                'status_craw_site'=>'error',
+                                'craw_site_status_message'=>$result['message'],
+                                'craw_site_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                'craw_next'=>'step_2'
+                            ]);
+                        echo 'craw keyword error '.$item['keyword'].'<p>';
                     }
-                    DB::connection('mongodb')->collection('mongo_keyword')
-                        ->where('_id',(string)$item['_id'])
-                        ->update([
-                            'site_craw_content'=>AppHelper::instance()->convertToUTF8($result['content']),
-                            'site_relate'=>$siteArray,
-                            'status_craw_site'=>'success',
-                            'craw_site_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                            'craw_next'=>'step_2',
-                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
-                        ]);
-                    echo 'craw keyword success '.$item['keyword'].'<p>';
-                }else if($result['result']=='error'){
-                    DB::connection('mongodb')->collection('mongo_keyword')
-                        ->where('_id',(string)$item['_id'])
-                        ->update([
-                            'status_craw_site'=>'error',
-                            'craw_site_status_message'=>$result['message'],
-                            'craw_site_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                            'craw_next'=>'step_2'
-                        ]);
-                    echo 'craw keyword error '.$item['keyword'].'<p>';
                 }
             }else{
                 DB::connection('mongodb')->collection('mongo_keyword')
@@ -709,21 +714,7 @@ class SchedulingController extends Controller
     }
     public function crawInfoDomain(){
         $getDomain=DB::connection('mongodb')->collection('mongo_domain')
-            ->where(function($query)
-            {
-                $query->where('status', '!=','active')
-                    ->where('craw_next','exists',false);
-            })
-            ->orWhere(function($query)
-            {
-                $query->where('title', '')
-                    ->where('craw_next','exists',false);
-            })
-            ->orWhere(function($query)
-            {
-                $query->where('title', null)
-                    ->where('craw_next','exists',false);
-            })
+            ->where('craw_next','exists',false)
             ->limit(3)->get();
         foreach($getDomain as $domain){
             $this->_domain=$domain['domain'];

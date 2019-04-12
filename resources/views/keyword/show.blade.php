@@ -18,6 +18,9 @@
 ?>
 @extends('layouts.default')
 @section('title', $keyword['keyword'])
+@if(!empty($keyword['description']))
+    @section('description', $keyword['description'])
+@endif
 @include('includes.header.css.css_default')
 @section('content')
     <div class="container-scroller">

@@ -35,3 +35,4 @@ Route::get('test', 'SchedulingController@keywordCraw');
 Route::get('/k/{slug}', 'KeywordController@show')->name('keyword.show');
 Route::get('/d/{domain}', 'DomainController@show')->name('domain.show');
 Route::get('/v/{yid}', 'VideoController@show')->name('video.show');
+Route::get('/sitemap{type}', 'SitemapsController@sitemap')->name('sitemap');

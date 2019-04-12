@@ -3,12 +3,22 @@
         <h2 class="card-title">@lang('base.site_relate_for_keyword') {!! $keyword['keyword'] !!}</h2>
     </div>
     <ul class="list-group">
+        <?php
+            $i=0;
+            $setDescription='';
+        ?>
         @foreach($keyword['site_relate'] as $siteRelate)
             <?php
             $site=DB::connection('mongodb')->collection('mongo_site')
                 ->where('_id', (string)$siteRelate)->first();
+            $i++;
             ?>
             @if(!empty($site['title']))
+                @if(empty($keyword['description']) && $i<=3)
+                    <?php
+                        $setDescription=$setDescription.' '.$site['title'];
+                    ?>
+                @endif
                 <li class="list-group-item">
                     <h4>{!! $site['title'] !!}</h4>
                     <?php
@@ -21,10 +31,13 @@
                     <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
                     <span>{!! $site['description'] !!}</span><br>
                     <span>{!! $site['link'] !!}</span><br>
-                    <i class="glyphicon glyphicon-globe"></i> <a href="{!! route('domain.show',$site['domain']) !!}" target="blank">{!! AppHelper::instance()->renameBlacklistWord($site['domain']) !!}</a>
+                    <i class="glyphicon glyphicon-globe"></i> <a href="{!! route('domain.show',$site['domain']) !!}">{!! AppHelper::instance()->renameBlacklistWord($site['domain']) !!}</a>
                 </li>
             @endif
         @endforeach
+        @if(empty($keyword['description']) && !empty($setDescription))
+           @section('description', $setDescription)
+        @endif
     </ul>
 
 </div>
