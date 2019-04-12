@@ -38,7 +38,11 @@ class KeywordController extends ConstructController
             }
         }else{
             $parsedUrl=parse_url($this->_keyword);
-            $domain=$this->_rulesDomain->resolve($parsedUrl['host']);
+            if(!empty($parsedUrl['host'])){
+                $domain=$this->_rulesDomain->resolve($parsedUrl['host']);
+            }else{
+                $domain=$this->_rulesDomain->resolve($this->_keyword);
+            }
             if(!empty($domain->getRegistrableDomain())){
                 return redirect()->route('domain.show', $domain->getRegistrableDomain());
             }else{
