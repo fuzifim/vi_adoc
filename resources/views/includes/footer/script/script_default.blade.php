@@ -12,6 +12,4 @@
 
     gtag('config', 'UA-6369288-8');
 </script>
-
-
 @endsection
