@@ -1,9 +1,21 @@
+<?php
+$ads='true';
+?>
 @extends('layouts.default')
 @section('title', $video['title'])
 @section('description', $video['description'])
 @section('setCanonical', route('video.show.id',array($video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))))
 @include('includes.header.css.css_default')
 @section('content')
+    @if($ads=='true' && config('app.env')!='local')
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "ca-pub-6739685874678212",
+                enable_page_level_ads: true
+            });
+        </script>
+    @endif
     <div class="container-scroller">
         @include('partials.navbar')
         <div class="container-fluid page-body-wrapper">
@@ -48,6 +60,18 @@
                                     <p>{!! $video['description'] !!}</p>
                                 </div>
                             </div>
+                            @if($ads=='true' && config('app.env')!='local')
+                                <div class="form-group">
+                                    <ins class="adsbygoogle"
+                                         style="display:block"
+                                         data-ad-client="ca-pub-6739685874678212"
+                                         data-ad-slot="7536384219"
+                                         data-ad-format="auto"></ins>
+                                    <script>
+                                        (adsbygoogle = window.adsbygoogle || []).push({});
+                                    </script>
+                                </div>
+                            @endif
                             @if(count($videoParent))
                                 <div class="card form-group">
                                     <div class="card-body">
@@ -68,6 +92,18 @@
                         </div>
                         <div class="col-md-4">
                             @if(count($videoParent))
+                                @if($ads=='true' && config('app.env')!='local')
+                                    <div class="form-group">
+                                        <ins class="adsbygoogle"
+                                             style="display:block"
+                                             data-ad-client="ca-pub-6739685874678212"
+                                             data-ad-slot="7536384219"
+                                             data-ad-format="auto"></ins>
+                                        <script>
+                                            (adsbygoogle = window.adsbygoogle || []).push({});
+                                        </script>
+                                    </div>
+                                @endif
                                 <div class="card form-group">
                                     @foreach(array_slice($videoParent, 12, 8) as $item)
                                         <li class="list-group-item">
