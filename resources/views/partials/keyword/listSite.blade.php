@@ -20,7 +20,14 @@
                     ?>
                 @endif
                 <li class="list-group-item">
-                    <h4><a href="{!! route('site.show',array($site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">{!! $site['title'] !!}</a></h4>
+                    <h4><a href="{!! route('site.show',array($site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">
+                            @if(!empty($site['title_full']))
+                                {!! $site['title_full'] !!}
+                            @else
+                                {!! $site['title'] !!}
+                            @endif
+                        </a>
+                    </h4>
                     <?php
                     if ($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                         $updated_at= $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');

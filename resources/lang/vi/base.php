@@ -30,5 +30,7 @@ return [
     'video_relate_for'=>'Video liên quan đến',
     'video_relate'=>'Video liên quan',
     'visit_to'=>'Truy cập đến',
-    'click_here'=>'Click vào đây'
+    'click_here'=>'Click vào đây',
+    'infomation_for'=>'Thông tin cho',
+    'domain'=>'Tên miền'
 ];

@@ -1,7 +1,14 @@
 @foreach($sites as $item)
     @if(!empty($item['title']))
         <li class="list-group-item">
-            <h4><a class="" id="" href="{!! route('site.show',array($item['_id'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">{!! $item['title'] !!}</a></h4>
+            <h4><a class="" id="" href="{!! route('site.show',array($item['_id'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">
+                    @if(!empty($item['title_full']))
+                        {!! $item['title_full'] !!}
+                    @else
+                        {!! $item['title'] !!}
+                    @endif
+                </a>
+            </h4>
             <?php
             if ($item['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                 $updated_at= $item['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');

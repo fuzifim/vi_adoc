@@ -11,6 +11,7 @@
             <div class="main-panel">
                 <div class="content-wrapper">
                     <h1><strong>{!! $site['title'] !!}</strong></h1>
+                    <p>@lang('base.domain'): <a href="{!! route('domain.show',$site['domain']) !!}">{!! AppHelper::instance()->renameBlacklistWord($site['domain']) !!}</a></p>
                     <?php
                     if($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                         $updated_at= $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s');
@@ -21,7 +22,9 @@
                     <small>@lang('base.updated_at') {!! $updated_at !!}</small> @if(!empty($site['view']))<small><strong>@lang('base.views'): {!! $site['view'] !!}</strong></small>@endif
                     <div class="card form-group">
                         <div class="card-body">
-                            infomation for {!! $site['domain'] !!}: {!! $site['title'] !!}
+                            <div class="card-title">
+                                @lang('base.infomation_for') {!! $site['domain'] !!}: {!! $site['title'] !!}
+                            </div>
                             <span>{!! $site['description'] !!}</span><br>
                             <span>{!! $site['link'] !!}</span><br>
                             <a class="btn btn-primary btn-block" id="" href="#" rel="nofollow" target="_blank">@lang('base.visit_to') {!! $site['title'] !!}
@@ -37,7 +40,7 @@
                                 </div>
                             </div>
                             <ul class="list-group">
-                                @include('partials.site.listSite', ['sites' => $siteRelate,'showDomain'=>true])
+                                @include('partials.site.listSite', ['sites' => $siteRelate,'showDomain'=>false])
                             </ul>
                         </div>
                     @endif
