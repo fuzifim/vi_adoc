@@ -80,7 +80,7 @@ $ads='true';
                                             <div class="row row-pad-5">
                                                 @foreach($chunk as $item)
                                                     <div class="col-md-3">
-                                                        <p class="text-center"><a href="{!! route('video.show.id',array($item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><img class="img-responsive" src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
+                                                        <p class="text-center"><a href="{!! route('video.show.id',array($item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><img class="w-100" src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
                                                         <strong><a href="{!! route('video.show.id',array($item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $item['title'] !!}</a> </strong>
                                                     </div>
                                                 @endforeach
