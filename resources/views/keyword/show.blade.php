@@ -15,6 +15,7 @@
     if(empty($keyword['site_relate']) && empty($keyword['image_relate']) && empty($keyword['video_relate'])){
         $showEmpty=true;
     }
+    $ads='true';
 ?>
 @extends('layouts.default')
 @section('title', $keyword['keyword'])
@@ -24,6 +25,15 @@
 @endif
 @include('includes.header.css.css_default')
 @section('content')
+    @if($ads=='true' && config('app.env')!='local')
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "ca-pub-6739685874678212",
+                enable_page_level_ads: true
+            });
+        </script>
+    @endif
     <div class="container-scroller">
         @include('partials.navbar')
         <div class="container-fluid page-body-wrapper">
@@ -69,16 +79,28 @@
                             @endif
                             @if($showListImage==1)
                                 @include('partials.keyword.listImage', ['keyword' => $keyword])
+                                @if($ads=='true' && config('app.env')!='local')
+                                    <div class="form-group">
+                                        <ins class="adsbygoogle"
+                                             style="display:block"
+                                             data-ad-client="ca-pub-6739685874678212"
+                                             data-ad-slot="7536384219"
+                                             data-ad-format="auto"></ins>
+                                        <script>
+                                            (adsbygoogle = window.adsbygoogle || []).push({});
+                                        </script>
+                                    </div>
+                                @endif
                             @endif
                             @if($showListVideo==0)
                                 @if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0)
-                                    @include('partials.keyword.listSite', ['keyword' => $keyword])
+                                    @include('partials.keyword.listSite', ['keyword' => $keyword,'ads'=>$ads])
                                 @endif
                             @endif
                             @if($showListVideo==1)
                                 <div class="row row-pad-5">
                                     <div class="col-md-9">
-                                        @include('partials.keyword.listSite', ['keyword' => $keyword])
+                                        @include('partials.keyword.listSite', ['keyword' => $keyword,'ads'=>$ads])
                                         @include('partials.keyword.listVideo_1', ['keyword' => $keyword,'from'=>0,'to'=>4])
                                         @include('partials.keyword.listVideo_2', ['keyword' => $keyword,'from'=>4,'to'=>4])
                                     </div>
