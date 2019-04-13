@@ -10,7 +10,14 @@
             @include('partials.sidebar')
             <div class="main-panel">
                 <div class="content-wrapper">
-                    <h1><strong>{!! $site['title'] !!}</strong></h1>
+                    <h1><strong>
+                        @if(!empty($site['title_full']))
+                            {!! $site['title_full'] !!}
+                        @else
+                            {!! $site['title'] !!}
+                        @endif
+                        </strong>
+                    </h1>
                     <p>@lang('base.domain'): <a href="{!! route('domain.show',$site['domain']) !!}">{!! AppHelper::instance()->renameBlacklistWord($site['domain']) !!}</a></p>
                     <?php
                     if($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
@@ -27,7 +34,13 @@
                             </div>
                             <span>{!! $site['description'] !!}</span><br>
                             <span>{!! $site['link'] !!}</span><br>
-                            <a class="btn btn-primary btn-block" id="" href="#" rel="nofollow" target="_blank">@lang('base.visit_to') {!! $site['title'] !!}
+                            <a class="btn btn-primary btn-block" id="" href="#" rel="nofollow" target="_blank">
+                                @lang('base.visit_to')
+                                @if(!empty($site['title_full']))
+                                    {!! $site['title_full'] !!}
+                                @else
+                                    {!! $site['title'] !!}
+                                @endif
                                 <p><strong>@lang('base.click_here')</strong></p>
                             </a>
                         </div>
