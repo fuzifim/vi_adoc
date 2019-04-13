@@ -41,7 +41,7 @@ class SchedulingController extends Controller
                 if(count($result['data'])){
                     $videoIdArray=[];
                     foreach ($result['data'] as $videoItem){
-                        $check=\App\Model\Mongo_Image::where('yid',$videoItem['idYoutube'])
+                        $check=\App\Model\Mongo_video::where('yid',$videoItem['idYoutube'])
                             ->first();
                         if(empty($check->title)){
                             try {
