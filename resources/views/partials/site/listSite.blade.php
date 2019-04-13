@@ -1,5 +1,23 @@
+<?php
+$i=0;
+?>
 @foreach($sites as $item)
     @if(!empty($item['title']))
+        <?php $i++ ?>
+        @if($i==3)
+            @if($ads=='true' && config('app.env')!='local')
+                <div class="form-group">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-6739685874678212"
+                         data-ad-slot="7536384219"
+                         data-ad-format="auto"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            @endif
+        @endif
         <li class="list-group-item">
             <h4><a class="" id="" href="{!! route('site.show',array($item['_id'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">
                     @if(!empty($item['title_full']))

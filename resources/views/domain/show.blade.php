@@ -43,6 +43,15 @@
 @section('description', mb_substr(AppHelper::instance()->renameBlacklistWord($domain['description']),0,320).' - '.$description)
 @include('includes.header.css.css_default')
 @section('content')
+    @if($ads=='true' && config('app.env')!='local')
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "ca-pub-6739685874678212",
+                enable_page_level_ads: true
+            });
+        </script>
+    @endif
     <div class="container-scroller">
         @include('partials.navbar')
         <div class="container-fluid page-body-wrapper">
@@ -97,6 +106,18 @@
                                     <strong>{{$domain['domain']}}</strong>@if(!empty($decodeWhois->creationDate)) @lang('base.created_at') {{$decodeWhois->creationDate}}  @endif @if(!empty($decodeWhois->expirationDate)) @lang('base.expiration_date') {{$decodeWhois->expirationDate}}. @endif @if(!empty($decodeWhois->registrar)) @lang('base.registrar') <strong>{!!$decodeWhois->registrar!!}</strong>.@endif @if(!empty($decodeWhois->nameServer)) @lang('base.name_server'): @if(!empty($decodeWhois->nameServer[0])){{$decodeWhois->nameServer[0]}}@endif @if(!empty($decodeWhois->nameServer[1]))and {{$decodeWhois->nameServer[1]}}@endif @endif. @if(!empty($domain['attribute']['rank'])) @lang('base.have_rank') {{$domain['attribute']['rank']}} @lang('base.in_global_rank'), @if(!empty($domain['attribute']['country_code']) && !empty($domain['attribute']['rank_country'])) @lang('base.rank_at') <strong>{{$domain['attribute']['country_code']}}</strong> @lang('base.is') {{$domain['attribute']['rank_country']}}@endif @endif
                                 </div>
                             </div>
+                        </div>
+                    @endif
+                    @if(count($siteRelate))
+                        <div class="card form-group">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    @lang('base.site_relate_for_keyword') {!! $domain['domain'] !!}
+                                </div>
+                            </div>
+                            <ul class="list-group">
+                                @include('partials.site.listSite', ['sites' => $siteRelate,'showDomain'=>false,'ads'=>$ads])
+                            </ul>
                         </div>
                     @endif
                     @if(!empty($domainContent->basic_info))
@@ -285,18 +306,6 @@
                                     <hr>
                                 @endif
                             </div>
-                        </div>
-                    @endif
-                    @if(count($siteRelate))
-                        <div class="card form-group">
-                            <div class="card-body">
-                                <div class="card-title">
-                                    @lang('base.site_relate_for_keyword') {!! $domain['domain'] !!}
-                                </div>
-                            </div>
-                            <ul class="list-group">
-                                @include('partials.site.listSite', ['sites' => $siteRelate,'showDomain'=>false])
-                            </ul>
                         </div>
                     @endif
                 </div>
