@@ -14,7 +14,7 @@
 		@if(count($getNote))
 		@foreach($getNote as $item)
 		<url>
-			<loc>{!! route('keyword.show',AppHelper::instance()->characterReplaceUrl($item['keyword'])) !!}</loc>
+			<loc>{!! route('keyword.show.id',array($item['_id'],str_slug(mb_substr($item['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}</loc>
 		</url>
 		@endforeach
 
