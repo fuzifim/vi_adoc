@@ -21,10 +21,18 @@ class ConstructController extends Controller
         });
         $this->_keywordPrimary = Cache::store('memcached')->remember('keyword_primary', 1, function()
         {
-            return DB::connection('mongodb')->collection('mongo_keyword')
-                ->where('lang',config('app.locale'))
-                ->where('parent',null)
-                ->simplePaginate(50);
+            if(config('app.domain')=='adoc.xyz'){
+                return DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('lang',config('app.locale'))
+                    ->where('parent',null)
+                    ->simplePaginate(50);
+            }else{
+                return DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('app_domain',config('app.domain'))
+                    ->where('lang',config('app.locale'))
+                    ->where('parent',null)
+                    ->simplePaginate(50);
+            }
         });
         $this->viewShare();
     }

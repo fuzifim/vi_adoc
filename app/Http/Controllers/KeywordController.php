@@ -125,6 +125,7 @@ class KeywordController extends ConstructController
                             'image'=>'',
                             'status'=>'pending',
                             'order_number'=>(!empty($request->orderNumber)?$request->orderNumber:0),
+                            'app_domain'=>config('app.domain'),
                             'lang'=>config('app.locale'),
                             'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                             'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())

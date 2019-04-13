@@ -29,11 +29,20 @@ class SchedulingController extends Controller
         });
     }
     public function crawVideoSearch(){
-        $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',config('app.locale'))
-            ->where('craw_next', 'step_4')
-            ->orderBy('order_number','desc')
-            ->limit(1)->get();
+        if(config('app.domain')=='adoc.xyz'){
+            $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('lang',config('app.locale'))
+                ->where('craw_next', 'step_4')
+                ->orderBy('order_number','desc')
+                ->limit(1)->get();
+        }else{
+            $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('app_domain',config('app.domain'))
+                ->where('lang',config('app.locale'))
+                ->where('craw_next', 'step_4')
+                ->orderBy('order_number','desc')
+                ->limit(1)->get();
+        }
         foreach ($getKeywords as $item) {
             $this->_keyword = $item['keyword'];
             $result = $this->getVideoFromYoutube();
@@ -174,12 +183,22 @@ class SchedulingController extends Controller
     }
     public function crawImageSearch()
     {
-        $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',config('app.locale'))
-            ->where('craw_next', 'step_3')
-            ->orderBy('created_at','asc')
-            ->orderBy('order_number','desc')
-            ->limit(1)->get();
+        if(config('app.domain')=='adoc.xyz'){
+            $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('lang',config('app.locale'))
+                ->where('craw_next', 'step_3')
+                ->orderBy('created_at','asc')
+                ->orderBy('order_number','desc')
+                ->limit(1)->get();
+        }else{
+            $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('app_domain',config('app.domain'))
+                ->where('lang',config('app.locale'))
+                ->where('craw_next', 'step_3')
+                ->orderBy('created_at','asc')
+                ->orderBy('order_number','desc')
+                ->limit(1)->get();
+        }
         foreach ($getKeywords as $item) {
             $this->_keyword = $item['keyword'];
             $result = $this->getImageFromSearch();
@@ -337,12 +356,22 @@ class SchedulingController extends Controller
         }
     }
     public function keywordSuggest(){
-        $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',config('app.locale'))
-            ->where('craw_next','step_2')
-            ->orderBy('created_at','asc')
-            ->orderBy('order_number','desc')
-            ->limit(1)->get();
+        if(config('app.domain')=='adoc.xyz'){
+            $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('lang',config('app.locale'))
+                ->where('craw_next','step_2')
+                ->orderBy('created_at','asc')
+                ->orderBy('order_number','desc')
+                ->limit(1)->get();
+        }else{
+            $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('app_domain',config('app.domain'))
+                ->where('lang',config('app.locale'))
+                ->where('craw_next','step_2')
+                ->orderBy('created_at','asc')
+                ->orderBy('order_number','desc')
+                ->limit(1)->get();
+        }
         foreach($getKeywords as $item){
             $this->_keyword=$item['keyword'];
             $result=$this->getSuggestqueries();
@@ -365,6 +394,7 @@ class SchedulingController extends Controller
                                         'description'=>'',
                                         'image'=>'',
                                         'status'=>'pending',
+                                        'app_domain'=>config('app.domain'),
                                         'lang'=>config('app.locale'),
                                         'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                                         'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
@@ -403,12 +433,22 @@ class SchedulingController extends Controller
     }
     // Step 2 keyword
     public function keywordCraw(){
-        $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',config('app.locale'))
-            ->where('craw_next','exists',false)
-            ->orderBy('order_number','desc')
-            ->orderBy('created_at','asc')
-            ->limit(1)->get();
+        if(config('app.domain')=='adoc.xyz'){
+            $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('lang',config('app.locale'))
+                ->where('craw_next','exists',false)
+                ->orderBy('order_number','desc')
+                ->orderBy('created_at','asc')
+                ->limit(1)->get();
+        }else{
+            $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('app_domain',config('app.domain'))
+                ->where('lang',config('app.locale'))
+                ->where('craw_next','exists',false)
+                ->orderBy('order_number','desc')
+                ->orderBy('created_at','asc')
+                ->limit(1)->get();
+        }
         foreach ($getKeywords as $item){
             if(!empty($item['keyword'])){
                 $this->_keyword=$item['keyword'];

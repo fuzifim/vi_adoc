@@ -55,6 +55,7 @@ return [
     */
 
     'url' => env('APP_URL', 'vi.adoc.xyz'),
+    'domain' => env('APP_DOMAIN', 'adoc.xyz'),
 
     'asset_url' => env('ASSET_URL', null),
 
