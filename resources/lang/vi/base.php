@@ -28,5 +28,7 @@ return [
     'header_info'=>'Thông tin header',
     'image_relate_for'=>'Hình ảnh liên quan đến',
     'video_relate_for'=>'Video liên quan đến',
-    'video_relate'=>'Video liên quan'
+    'video_relate'=>'Video liên quan',
+    'visit_to'=>'Truy cập đến',
+    'click_here'=>'Click vào đây'
 ];

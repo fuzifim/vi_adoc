@@ -1,6 +1,7 @@
 @extends('layouts.default')
 @section('title', $video['title'])
 @section('description', $video['description'])
+@section('setCanonical', route('video.show.id',array($video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))))
 @include('includes.header.css.css_default')
 @section('content')
     <div class="container-scroller">
@@ -11,7 +12,7 @@
                 <div class="content-wrapper">
                     <h1><strong>{!! $video['title'] !!}</strong></h1>
                     <?php
-                    if ($video['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+                    if($video['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                         $updated_at= $video['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s');
                     }else{
                         $updated_at= $video['updated_at'];
@@ -19,7 +20,23 @@
                     ?>
                     <small>@lang('base.updated_at') {!! $updated_at !!}</small> @if(!empty($video['view']))<small><strong>@lang('base.views'): {!! $video['view'] !!}</strong></small>@endif
                     @if(!empty($video['parent']))
-                        <p>Parent <a href="{!! route('keyword.show',AppHelper::instance()->characterReplaceUrl($video['parent'])) !!}">{!! $video['parent'] !!}</a></p>
+                        @if(empty($video['parent_id']))
+                            <?php
+                            $parentKey = DB::connection('mongodb')->collection('mongo_keyword')
+                                ->where('base_64', base64_encode($video['parent']))->first();
+                            DB::connection('mongodb')->collection('mongo_video')
+                                ->where('_id',(string)$video['_id'])
+                                ->update(
+                                    [
+                                        'parent_id'=>(string)$parentKey['_id']
+                                    ]
+                                );
+
+                            ?>
+                            <p>Parent <a href="{!! route('keyword.show.id',array($parentKey['_id'],str_slug(mb_substr($parentKey['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $video['parent'] !!}</a></p>
+                        @else
+                            <p>Parent <a href="{!! route('keyword.show.id',array($video['parent_id'],str_slug(mb_substr($video['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $video['parent'] !!}</a></p>
+                        @endif
                     @endif
                     <div class="row row-pad-5">
                         <div class="col-md-8">
@@ -39,8 +56,8 @@
                                             <div class="row row-pad-5">
                                                 @foreach($chunk as $item)
                                                     <div class="col-md-3">
-                                                        <p class="text-center"><a href="{!! route('video.show',$item['yid']) !!}"><img class="img-responsive" src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
-                                                        <strong><a href="{!! route('video.show',$item['yid']) !!}">{!! $item['title'] !!}</a> </strong>
+                                                        <p class="text-center"><a href="{!! route('video.show.id',array($item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><img class="img-responsive" src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
+                                                        <strong><a href="{!! route('video.show.id',array($item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $item['title'] !!}</a> </strong>
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -54,8 +71,8 @@
                                 <div class="card form-group">
                                     @foreach(array_slice($videoParent, 12, 8) as $item)
                                         <li class="list-group-item">
-                                            <p class="text-center"><a href="{!! route('video.show',$item['yid']) !!}"><img src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
-                                            <strong><a href="{!! route('video.show',$item['yid']) !!}">{!! $item['title'] !!}</a> </strong>
+                                            <p class="text-center"><a href="{!! route('video.show.id',array($item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><img src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
+                                            <strong><a href="{!! route('video.show.id',array($item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $item['title'] !!}</a> </strong>
                                         </li>
                                     @endforeach
                                 </div>

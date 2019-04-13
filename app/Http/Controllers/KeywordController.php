@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
-use App\Model\Keyword_mongo;
+use App\Model\Mongokeyword;
 use Carbon\Carbon;
 use Cache;
 use AppHelper;
@@ -53,6 +53,28 @@ class KeywordController extends ConstructController
             }
         }
     }
+    public function showById(){
+        if(!empty($this->_parame['id'])){
+            $getKeyword = DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('_id', $this->_parame['id'])->first();
+            if(!empty($getKeyword['keyword'])){
+                DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('_id',$this->_parame['id'])
+                    ->increment('view', 1);
+                $return=array(
+                    'keyword'=>$getKeyword
+                );
+                return Cache::store('memcached')->remember('show_keyword_'.$getKeyword['_id'], 5, function() use($return) {
+                    return view('keyword.show', $return)->render();
+                });
+            }else{
+                $return=array(
+                    'keyword'=>$this->_keyword
+                );
+                return view('keyword.notfound',$return);
+            }
+        }
+    }
     public function keyword_of_page()
     {
         $getKeyword=DB::connection('mongodb')->collection('mongo_keyword')
@@ -83,7 +105,7 @@ class KeywordController extends ConstructController
     public function keyword_of_page_add_request(Request $request)
     {
         if(!empty($request->keywordid)){
-            $keyword=Keyword_mongo::find($request->keywordid);
+            $keyword=Mongokeyword::find($request->keywordid);
             if(!empty($keyword->keyword)){
                 $keyword->order_number=(!empty($request->orderNumber)?$request->orderNumber:0);
                 $keyword->save();

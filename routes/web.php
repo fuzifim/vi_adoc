@@ -32,7 +32,10 @@ Route::group(['prefix' => 'manager'], function () {
         ->middleware('auth');
 });
 Route::get('test', 'SchedulingController@keywordCraw');
+Route::get('/k/{id}/{slug}', 'KeywordController@showById')->name('keyword.show.id');
 Route::get('/k/{slug}', 'KeywordController@show')->name('keyword.show');
 Route::get('/d/{domain}', 'DomainController@show')->name('domain.show');
+Route::get('/v/{yid}/{slug}', 'VideoController@showById')->name('video.show.id');
 Route::get('/v/{yid}', 'VideoController@show')->name('video.show');
+Route::get('/site/{id}/{slug}', 'SiteController@showById')->name('site.show');
 Route::get('/sitemap{type}', 'SitemapsController@sitemap')->name('sitemap');

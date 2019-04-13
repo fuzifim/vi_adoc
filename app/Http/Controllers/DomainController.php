@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
-use App\Model\Keyword_mongo;
+use App\Model\Mongokeyword;
 use Carbon\Carbon;
 use Cache;
 use AppHelper;
@@ -25,8 +25,15 @@ class DomainController extends ConstructController
                 DB::connection('mongodb')->collection('mongo_domain')
                     ->where('base_64',base64_encode($this->_parame['domain']))
                     ->increment('view', 1);
+                $siteRelate=Cache::store('memcached')->remember('site_relate_'.base64_encode($domain['domain']), 1, function() use($domain)
+                {
+                    return DB::connection('mongodb')->collection('mongo_site')
+                        ->where('domain',$domain['domain'])
+                        ->limit(10)->get();
+                });
                 $return=array(
-                    'domain'=>$domain
+                    'domain'=>$domain,
+                    'siteRelate'=>$siteRelate
                 );
                 return view('domain.show', $return);
             }else{

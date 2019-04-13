@@ -18,6 +18,7 @@
 ?>
 @extends('layouts.default')
 @section('title', $keyword['keyword'])
+@section('setCanonical', route('keyword.show.id',array($keyword['_id'],str_slug(mb_substr($keyword['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))))
 @if(!empty($keyword['description']))
     @section('description', $keyword['description'])
 @endif
@@ -40,7 +41,23 @@
                         ?>
                         <small>@lang('base.updated_at') {!! $updated_at !!}</small> @if(!empty($keyword['view']))<small><strong>@lang('base.views'): {!! $keyword['view'] !!}</strong></small>@endif
                         @if(!empty($keyword['parent']))
-                            <p>Parent <a href="{!! route('keyword.show',AppHelper::instance()->characterReplaceUrl($keyword['parent'])) !!}">{!! $keyword['parent'] !!}</a></p>
+                            @if(empty($keyword['parent_id']))
+                                <?php
+                                $parentKey = DB::connection('mongodb')->collection('mongo_keyword')
+                                    ->where('base_64', base64_encode($keyword['parent']))->first();
+                                DB::connection('mongodb')->collection('mongo_keyword')
+                                    ->where('_id',(string)$keyword['_id'])
+                                    ->update(
+                                        [
+                                            'parent_id'=>(string)$parentKey['_id']
+                                        ]
+                                    );
+
+                                ?>
+                                <p>Parent <a href="{!! route('keyword.show.id',array($parentKey['_id'],str_slug(mb_substr($parentKey['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keyword['parent'] !!}</a></p>
+                            @else
+                                <p>Parent <a href="{!! route('keyword.show.id',array($keyword['parent_id'],str_slug(mb_substr($keyword['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keyword['parent'] !!}</a></p>
+                            @endif
                         @endif
                     </div>
                     <div class="row row-pad-5">
@@ -83,7 +100,11 @@
                                         $keywordRe=DB::connection('mongodb')->collection('mongo_keyword')
                                             ->where('_id', (string)$keywordRelate)->first();
                                         ?>
-                                        <span><a class="badge" href="{!! route('keyword.show',AppHelper::instance()->characterReplaceUrl($keywordRe['keyword'])) !!}">{!! $keywordRe['keyword'] !!}</a></span>
+                                        @if(empty($keywordRe['craw_next']))
+                                            <span class="badge badge-secondary mb-1">{!! $keywordRe['keyword'] !!}</span>
+                                        @else
+                                            <span><a class="badge badge-success mb-1" href="{!! route('keyword.show.id',array($keywordRe['_id'],str_slug(mb_substr($keywordRe['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keywordRe['keyword'] !!}</a></span>
+                                        @endif
                                     @endforeach
                                 </div>
                             @endif

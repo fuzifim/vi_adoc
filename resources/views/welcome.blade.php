@@ -15,7 +15,7 @@
                             <h3 class="card-title">Từ khóa mới cập nhật</h3>
                             @if(count($newKeyword))
                                 @foreach($newKeyword as $item)
-                                    <a class="badge badge-secondary mb-1" href="{!! route('keyword.show',AppHelper::instance()->characterReplaceUrl($item['keyword'])) !!}">{!! $item['keyword'] !!}</a>
+                                    <a class="badge badge-secondary mb-1" href="{!! route('keyword.show.id',array($item['_id'],str_slug(mb_substr($item['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $item['keyword'] !!}</a>
                                 @endforeach
                             @endif
                         </div>

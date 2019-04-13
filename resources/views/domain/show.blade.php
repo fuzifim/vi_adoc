@@ -246,7 +246,7 @@
                         $getH4 = $dom->getElementsByTagName('h4');
                         $getH5 = $dom->getElementsByTagName('h5');
                         ?>
-                        <div class="card">
+                        <div class="card form-group">
                             <div class="card-body">
                                 <h5 class="card-title">@lang('base.tag_info_for') {!! $domain['domain'] !!}</h5>
                                 @if($getH1->length>0)
@@ -285,6 +285,18 @@
                                     <hr>
                                 @endif
                             </div>
+                        </div>
+                    @endif
+                    @if(count($siteRelate))
+                        <div class="card form-group">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    @lang('base.site_relate_for_keyword') {!! $domain['domain'] !!}
+                                </div>
+                            </div>
+                            <ul class="list-group">
+                                @include('partials.site.listSite', ['sites' => $siteRelate,'showDomain'=>false])
+                            </ul>
                         </div>
                     @endif
                 </div>
