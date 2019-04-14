@@ -28,5 +28,7 @@
 @yield('content')
 @section('footer')
 @show
+@section('footer_script')
+@show
 </body>
 </html>
