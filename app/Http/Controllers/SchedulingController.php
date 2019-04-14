@@ -358,23 +358,25 @@ class SchedulingController extends Controller
                             ->where('base_64',base64_encode($keyword))
                             ->first();
                         if(empty($checkKeyword['keyword'])){
-                            $keywordId=DB::connection('mongodb')->collection('mongo_keyword')
-                                ->insertGetId(
-                                    [
-                                        'parent'=>$item['keyword'],
-                                        'parent_id'=>(string)$item['_id'],
-                                        'keyword' => $keyword,
-                                        'base_64' => base64_encode($keyword),
-                                        'description'=>'',
-                                        'image'=>'',
-                                        'status'=>'pending',
-                                        'app_domain'=>config('app.domain'),
-                                        'lang'=>config('app.locale'),
-                                        'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                                        'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
-                                    ]
-                                );
-                            array_push($keywordIdArray,(string)$keywordId);
+                            if(AppHelper::instance()->checkBlacklistWord($checkKeyword['keyword'])){
+                                $keywordId=DB::connection('mongodb')->collection('mongo_keyword')
+                                    ->insertGetId(
+                                        [
+                                            'parent'=>$item['keyword'],
+                                            'parent_id'=>(string)$item['_id'],
+                                            'keyword' => $keyword,
+                                            'base_64' => base64_encode($keyword),
+                                            'description'=>'',
+                                            'image'=>'',
+                                            'status'=>'pending',
+                                            'app_domain'=>config('app.domain'),
+                                            'lang'=>config('app.locale'),
+                                            'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                        ]
+                                    );
+                                array_push($keywordIdArray,(string)$keywordId);
+                            }
                         }else{
                             array_push($keywordIdArray,(string)$checkKeyword['_id']);
                         }
@@ -460,24 +462,26 @@ class SchedulingController extends Controller
                                     ->where('domain',$data['domain'])
                                     ->first();
                                 if(empty($checkSite['title'])){
-                                    $siteId=DB::connection('mongodb')->collection('mongo_site')
-                                        ->insertGetId(
-                                            [
-                                                'title' => $title,
-                                                'base_64' => base64_encode($title),
-                                                'title_full'=>AppHelper::instance()->convertToUTF8($data['title']),
-                                                'link' => $data['linkFull'],
-                                                'domain'=>$data['domain'],
-                                                'description'=>AppHelper::instance()->convertToUTF8($data['description']),
-                                                'attribute'=>[],
-                                                'view'=>0,
-                                                'status'=>'pending',
-                                                'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                                                'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
-                                            ]
-                                        );
-                                    array_push($siteArray,(string)$siteId);
-                                    echo 'insert site '.$data['linkFull'].' have count '.count($result['data']).'<p>';
+                                    if(AppHelper::instance()->checkBlacklistWord($checkSite['title'])){
+                                        $siteId=DB::connection('mongodb')->collection('mongo_site')
+                                            ->insertGetId(
+                                                [
+                                                    'title' => $title,
+                                                    'base_64' => base64_encode($title),
+                                                    'title_full'=>AppHelper::instance()->convertToUTF8($data['title']),
+                                                    'link' => $data['linkFull'],
+                                                    'domain'=>$data['domain'],
+                                                    'description'=>AppHelper::instance()->convertToUTF8($data['description']),
+                                                    'attribute'=>[],
+                                                    'view'=>0,
+                                                    'status'=>'pending',
+                                                    'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                                    'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                                ]
+                                            );
+                                        array_push($siteArray,(string)$siteId);
+                                        echo 'insert site '.$data['linkFull'].' have count '.count($result['data']).'<p>';
+                                    }
                                 }else{
                                     array_push($siteArray,(string)$checkSite['_id']);
                                     echo 'update site relate '.$checkSite['link'].' have count '.count($result['data']).'<p>';
