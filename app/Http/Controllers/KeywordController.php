@@ -77,10 +77,18 @@ class KeywordController extends ConstructController
     }
     public function keyword_of_page()
     {
-        $getKeyword=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('lang',config('app.locale'))
-            ->where('parent',null)
-            ->simplePaginate(10);
+        if(config('app.domain')=='adoc.xyz'){
+            $getKeyword=DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('lang',config('app.locale'))
+                ->where('parent',null)
+                ->simplePaginate(10);
+        }else{
+            $getKeyword=DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('app_domain',config('app.domain'))
+                ->where('lang',config('app.locale'))
+                ->where('parent',null)
+                ->simplePaginate(10);
+        }
         $data=array(
             'keywords'=>$getKeyword
         );

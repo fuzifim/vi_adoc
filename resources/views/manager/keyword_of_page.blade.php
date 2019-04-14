@@ -1,5 +1,5 @@
 @extends('layouts.default')
-@section('title', 'A Document Việt Nam')
+@section('title', (!empty($channel['siteConfig']->site_name)?$channel['siteConfig']->site_name:''))
 @include('includes.header.css.css_default')
 @section('content')
     <div class="container-scroller">
@@ -15,6 +15,7 @@
                             <li class="list-group-item"><a href="{!! route('keyword.of.page.update',$item['_id']) !!}">{!! $item['keyword'] !!}</a></li>
                         @endforeach
                     </ul>
+                        {{ $keywords->links() }}
                     @else
                         <div class="alert alert-danger">Chưa có bất kỳ từ khóa nào cho trang này! </div>
                     @endif
