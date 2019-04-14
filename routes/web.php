@@ -10,9 +10,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Auth::routes();
+
 
 Route::get('/', 'HomeController@index')->name('home');
+Auth::routes();
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::group(['prefix' => 'manager'], function () {
     Route::get('/keyword/of_page', 'KeywordController@keyword_of_page')
