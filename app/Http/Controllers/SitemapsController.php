@@ -14,28 +14,16 @@ class SitemapsController extends ConstructController
     public function sitemap(){
         if($this->_parame['type']=='_category.xml'){
             $sitemapIndex='false';
-            if(config('app.domain')=='adoc.xyz'){
-                $getNote = Cache::store('memcached')->remember('sitemap_category',1, function()
-                {
-                    return DB::connection('mongodb')->collection('mongo_keyword')
-                        ->select('keyword')
-                        ->where('lang',config('app.locale'))
-                        ->where('craw_next','exists',true)
-                        ->orderBy('updated_at','desc')
-                        ->limit(200)->get();
-                });
-            }else{
-                $getNote = Cache::store('memcached')->remember('sitemap_category',1, function()
-                {
-                    return DB::connection('mongodb')->collection('mongo_keyword')
-                        ->select('keyword')
-                        ->where('app_domain',config('app.domain'))
-                        ->where('lang',config('app.locale'))
-                        ->where('craw_next','exists',true)
-                        ->orderBy('updated_at','desc')
-                        ->limit(200)->get();
-                });
-            }
+            $getNote = Cache::store('memcached')->remember('sitemap_category',1, function()
+            {
+                return DB::connection('mongodb')->collection('mongo_keyword')
+                    ->select('keyword')
+                    ->where('app_domain',config('app.domain'))
+                    ->where('lang',config('app.locale'))
+                    ->where('craw_next','exists',true)
+                    ->orderBy('updated_at','desc')
+                    ->limit(200)->get();
+            });
         }else if($this->_parame['type']=='_video.xml'){
             $sitemapIndex='false';
             $getNote = Cache::store('memcached')->remember('sitemap_video',1, function()
