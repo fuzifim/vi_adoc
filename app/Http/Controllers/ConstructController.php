@@ -8,6 +8,7 @@ use Cache;
 use Route;
 class ConstructController extends Controller
 {
+    public $_siteConfig;
     public $_parame;
     public $_keywordPrimary;
     public $_rulesDomain;
@@ -34,11 +35,16 @@ class ConstructController extends Controller
                     ->simplePaginate(50);
             }
         });
+        $this->_siteConfig = Cache::store('memcached')->remember('site_config', 1, function()
+        {
+            return DB::table('site_config')->where('config_type','site_config')->first();
+        });
         $this->viewShare();
     }
     private function viewShare(){
         view()->share(
             'channel',array(
+                'siteConfig'=>$this->_siteConfig,
                 'keywordPrimary'=>$this->_keywordPrimary,
             )
         );

@@ -16,6 +16,12 @@ Route::get('/', 'HomeController@index')->name('home');
 Auth::routes();
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::group(['prefix' => 'manager'], function () {
+    Route::get('/site_config', 'ManagerController@siteConfig')
+        ->name('site.config')
+        ->middleware('auth');
+    Route::post('/site_config', 'ManagerController@siteConfigUpdate')
+        ->name('site.config.update')
+        ->middleware('auth');
     Route::get('/keyword/of_page', 'KeywordController@keyword_of_page')
         ->name('keyword.of.page')
         ->middleware('auth');

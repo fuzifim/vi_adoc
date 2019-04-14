@@ -1,8 +1,8 @@
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
     <div class="navbar-brand-wrapper d-flex justify-content-center">
         <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
-            <a class="navbar-brand brand-logo" href="{!! route('home') !!}">A Doc</a>
-            <a class="navbar-brand brand-logo-mini" href="{!! route('home') !!}">Doc</a>
+            <a class="navbar-brand brand-logo" href="{!! route('home') !!}">@if(!empty($channel['siteConfig']->site_name)){!! $channel['siteConfig']->site_name !!}@endif</a>
+            <a class="navbar-brand brand-logo-mini" href="{!! route('home') !!}">@if(!empty($channel['siteConfig']->site_name_short)){!! $channel['siteConfig']->site_name_short !!}@endif</a>
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <span class="mdi mdi-sort-variant"></span>
             </button>
@@ -32,6 +32,10 @@
                     <a class="dropdown-item" href="{!! route('keyword.of.page') !!}">
                         <i class="mdi mdi-logout text-primary"></i>
                         @lang('base.keyword_of_page')
+                    </a>
+                    <a class="dropdown-item" href="{!! route('site.config') !!}">
+                        <i class="mdi mdi-logout text-primary"></i>
+                        @lang('base.site_config')
                     </a>
                     @endif
                     <a class="dropdown-item" href="{!! route('logout') !!}">

@@ -5,6 +5,7 @@ return [
     'logout'=>'Đăng xuất',
     'password_reset'=>'Đặt lại mật khẩu',
     'keyword_of_page'=>'Từ khóa của trang',
+    'site_config'=>'Cài đặt trang',
     'search'=>'Tìm kiếm',
     'site_relate_for_keyword'=>'Trang liên quan đến',
     'this_domain'=>'Tên miền',

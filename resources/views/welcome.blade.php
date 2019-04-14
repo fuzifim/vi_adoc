@@ -1,5 +1,5 @@
 @extends('layouts.default')
-@section('title', 'A Doc Việt Nam')
+@section('title', (!empty($channel['siteConfig']->site_name)?$channel['siteConfig']->site_name:''))
 @include('includes.header.css.css_default')
 @section('content')
     <div class="container-scroller">
