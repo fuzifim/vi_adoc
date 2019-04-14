@@ -529,6 +529,8 @@ class SchedulingController extends Controller
                             ]);
                         echo 'craw keyword error '.$item['keyword'].'<p>';
                     }
+                }else{
+                    echo 'chua toi thoi gian craw';
                 }
             }else{
                 DB::connection('mongodb')->collection('mongo_keyword')
