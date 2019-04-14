@@ -53,7 +53,7 @@
                                 </div>
                             </div>
                             <ul class="list-group">
-                                @include('partials.site.listSite', ['sites' => $siteRelate,'showDomain'=>false])
+                                @include('partials.site.listSite', ['sites' => $siteRelate,'showDomain'=>false,'ads'=>'false'])
                             </ul>
                         </div>
                     @endif
