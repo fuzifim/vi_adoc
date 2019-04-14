@@ -29,6 +29,7 @@ class ManagerController extends ConstructController
                 'site_domain'=>$request->site_domain,
                 'site_url'=>$request->site_url,
                 'site_lang'=>$request->site_lang,
+                'webmaster_tools'=>$request->webmaster_tools,
                 'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
             );

@@ -37,6 +37,10 @@
                                         <label for="lang">Lang</label>
                                         <input type="text" class="form-control" name="site_lang" id="lang" placeholder="lang" value="{!! config('app.locale') !!}" readonly>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="webmaster_tools">Webmaster tools</label>
+                                        <input type="text" class="form-control" name="webmaster_tools" id="webmaster_tools" placeholder="webmaster_tools" @if(!empty($siteConfig->webmaster_tools)) value="{!! $siteConfig->webmaster_tools !!}"@endif>
+                                    </div>
                                     <button type="submit" class="btn btn-primary mr-2">Lưu</button>
                                     <button class="btn btn-light">Cancel</button>
                                 </form>

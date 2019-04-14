@@ -20,6 +20,10 @@ class ConstructController extends Controller
             $rules = \Pdp\Rules::createFromPath($pdp_url);
             return $rules;
         });
+        $this->_siteConfig = Cache::store('memcached')->remember('site_config', 1, function()
+        {
+            return DB::table('site_config')->where('config_type','site_config')->first();
+        });
         $this->_keywordPrimary = Cache::store('memcached')->remember('keyword_primary', 1, function()
         {
             return DB::connection('mongodb')->collection('mongo_keyword')
@@ -27,10 +31,6 @@ class ConstructController extends Controller
                 ->where('lang',config('app.locale'))
                 ->where('parent',null)
                 ->simplePaginate(50);
-        });
-        $this->_siteConfig = Cache::store('memcached')->remember('site_config', 1, function()
-        {
-            return DB::table('site_config')->where('config_type','site_config')->first();
         });
         $this->viewShare();
     }

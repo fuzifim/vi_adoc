@@ -18,7 +18,9 @@
         <meta property="og:image" content="@yield('image')" />
     @endif
     <link rel="icon" href="{{ asset('favicon.png') }}" />
-    <meta name="google-site-verification" content="xVR-3NTFIzHZbeNT_0VJc2a9t3W5dIwrszUBbruFnx8" />
+    @if(!empty($channel['siteConfig']->webmaster_tools))
+        <meta name="google-site-verification" content="{!! $channel['siteConfig']->webmaster_tools !!}" />
+    @endif
     @section('header_css')
     @show
 </head>
