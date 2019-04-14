@@ -46,3 +46,4 @@ Route::get('/v/{yid}/{slug}', 'VideoController@showById')->name('video.show.id')
 Route::get('/v/{yid}', 'VideoController@show')->name('video.show');
 Route::get('/site/{id}/{slug}', 'SiteController@showById')->name('site.show');
 Route::get('/sitemap{type}', 'SitemapsController@sitemap')->name('sitemap');
+Route::get('/goto/{url}', 'PagesController@gotoUrl')->name('go.to.url')->where('url', '.*');

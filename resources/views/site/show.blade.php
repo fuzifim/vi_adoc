@@ -34,7 +34,7 @@
                             </div>
                             <span>{!! $site['description'] !!}</span><br>
                             <span>{!! $site['link'] !!}</span><br>
-                            <a class="btn btn-primary btn-block" id="" href="#" rel="nofollow" target="_blank">
+                            <a class="btn btn-primary btn-block" id="" href="{!! route('go.to.url',urlencode($site['link'])) !!}" rel="nofollow" target="_blank">
                                 @lang('base.visit_to')
                                 @if(!empty($site['title_full']))
                                     {!! $site['title_full'] !!}

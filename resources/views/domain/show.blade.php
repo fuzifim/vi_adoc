@@ -94,7 +94,7 @@
                             $scheme='http';
                         }
                         ?>
-                        <a class="btn btn-primary btn-block siteLink" id="linkContinue" href="#" rel="nofollow" target="blank">@lang('base.visit_to_site')
+                        <a class="btn btn-primary btn-block siteLink" id="linkContinue" href="{!! route('go.to.url',$scheme.'://'.$domain['domain']) !!}" rel="nofollow" target="blank">@lang('base.visit_to_site')
                             <p><strong>{!! $domain['domain'] !!}</strong></p>
                         </a>
                     </div>
