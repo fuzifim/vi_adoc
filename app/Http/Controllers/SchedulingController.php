@@ -1001,7 +1001,11 @@ class SchedulingController extends Controller
                 'connect_timeout' => '5',
                 'timeout' => '5'
             ]);
-            $response = $client->request('GET', 'https://www.google.com.vn/search?q='.urlencode($this->_keyword));
+            if(config('app.locale')=='vi'){
+                $response = $client->request('GET', 'https://www.google.com.vn/search?q='.urlencode($this->_keyword));
+            }else{
+                $response = $client->request('GET', 'https://www.google.com/search?q='.urlencode($this->_keyword));
+            }
             $getResponse=$response->getBody()->getContents();
             $dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
             $doc = new \DOMDocument;
@@ -1123,7 +1127,11 @@ class SchedulingController extends Controller
                 'connect_timeout' => '5',
                 'timeout' => '5'
             ]);
-            $response = $client->request('GET', 'https://vn.search.yahoo.com/search?p='.urlencode($this->_keyword));
+            if(config('app.locale')=='vi'){
+                $response = $client->request('GET', 'https://vn.search.yahoo.com/search?p='.urlencode($this->_keyword));
+            }else{
+                $response = $client->request('GET', 'https://search.yahoo.com/search?p='.urlencode($this->_keyword));
+            }
             $getResponse=$response->getBody()->getContents();
             $dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
             $doc = new \DOMDocument;
@@ -1370,7 +1378,11 @@ class SchedulingController extends Controller
     }
     public function getImageFromSearch(){
         try{
-            $url='https://www.google.com.vn/search?q='.urlencode($this->_keyword).'&tbm=isch';
+            if(config('app.locale')=='vi'){
+                $url='https://www.google.com.vn/search?q='.urlencode($this->_keyword).'&tbm=isch';
+            }else{
+                $url='https://www.google.com/search?q='.urlencode($this->_keyword).'&tbm=isch';
+            }
             $client = new Client([
                 'headers' => [
                     'Content-Type' => 'text/html',
