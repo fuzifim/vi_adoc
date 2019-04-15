@@ -23,6 +23,7 @@
     @endif
     @section('header_css')
     @show
+    @yield('ads')
 </head>
 <body>
 @yield('content')

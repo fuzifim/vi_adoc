@@ -26,6 +26,10 @@
                                         <input type="text" class="form-control" name="site_name_short" id="site_name_short" placeholder="Site name short" @if(!empty($siteConfig->site_name_short)) value="{!! $siteConfig->site_name_short !!}" @endif>
                                     </div>
                                     <div class="form-group">
+                                        <label for="site_description">Site Description</label>
+                                        <input type="text" class="form-control" name="site_description" id="site_description" placeholder="Site description" @if(!empty($siteConfig->site_description)) value="{!! $siteConfig->site_description!!}" @endif>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="site_domain">Site Domain</label>
                                         <input type="text" class="form-control" name="site_domain" id="site_domain" placeholder="Site Domain" @if(!empty($siteConfig->site_domain)) value="{!! $siteConfig->site_domain !!}"@endif>
                                     </div>
@@ -40,6 +44,12 @@
                                     <div class="form-group">
                                         <label for="webmaster_tools">Webmaster tools</label>
                                         <input type="text" class="form-control" name="webmaster_tools" id="webmaster_tools" placeholder="webmaster_tools" @if(!empty($siteConfig->webmaster_tools)) value="{!! $siteConfig->webmaster_tools !!}"@endif>
+                                    </div>
+                                    <div class="form-check form-check-primary">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" name="site_ads" class="form-check-input" @if(!empty($siteConfig->site_ads))checked=""@endif>
+                                            Kích hoạt quảng cáo
+                                            <i class="input-helper"></i></label>
                                     </div>
                                     <button type="submit" class="btn btn-primary mr-2">Lưu</button>
                                     <button class="btn btn-light">Cancel</button>

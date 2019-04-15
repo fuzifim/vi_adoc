@@ -30,7 +30,10 @@
     }else{
         $domainContent=array();
     }
-    $ads='true';
+    $ads='false';
+    if(!empty($channel['siteConfig']->site_ads) && $channel['siteConfig']->site_ads=='on'){
+        $ads='true';
+    }
     if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'){
         $ads='false';
     }else if($domain['status']=='blacklist' && $domain['status']=='disable' && $domain['status']=='delete'){
@@ -42,8 +45,8 @@
 @section('title', $domain['domain'].' '.mb_substr(AppHelper::instance()->renameBlacklistWord($domain['title']),0,150))
 @section('description', mb_substr(AppHelper::instance()->renameBlacklistWord($domain['description']),0,320).' - '.$description)
 @include('includes.header.css.css_default')
-@section('content')
-    @if($ads=='true' && config('app.env')!='local')
+@if($ads=='true' && config('app.env')!='local')
+    @section('ads')
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <script>
             (adsbygoogle = window.adsbygoogle || []).push({
@@ -51,7 +54,9 @@
                 enable_page_level_ads: true
             });
         </script>
-    @endif
+    @endsection
+@endif
+@section('content')
     <div class="container-scroller">
         @include('partials.navbar')
         <div class="container-fluid page-body-wrapper">

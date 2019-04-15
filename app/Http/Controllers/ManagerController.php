@@ -25,11 +25,13 @@ class ManagerController extends ConstructController
         if(!empty($request->site_name) && !empty($request->site_domain) && !empty($request->site_url) && !empty($request->site_lang)){
             $data=array(
                 'site_name'=>$request->site_name,
+                'site_description'=>$request->site_description,
                 'site_name_short'=>$request->site_name_short,
                 'site_domain'=>$request->site_domain,
                 'site_url'=>$request->site_url,
                 'site_lang'=>$request->site_lang,
                 'webmaster_tools'=>$request->webmaster_tools,
+                'site_ads'=>$request->site_ads,
                 'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
             );

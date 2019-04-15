@@ -45,9 +45,9 @@
                 </div>
             </li>
             @else
-                <li class="nav-item nav-profile">
-                    <a class="nav-link" href="{!! route('login') !!}">@lang('base.login')</a>
-                </li>
+                {{--<li class="nav-item nav-profile">--}}
+                    {{--<a class="nav-link" href="{!! route('login') !!}">@lang('base.login')</a>--}}
+                {{--</li>--}}
             @endif
         </ul>
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">

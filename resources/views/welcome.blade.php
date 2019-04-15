@@ -1,6 +1,17 @@
 @extends('layouts.default')
 @section('title', (!empty($channel['siteConfig']->site_name)?$channel['siteConfig']->site_name:''))
 @include('includes.header.css.css_default')
+@if(!empty($channel['siteConfig']->site_ads) && $channel['siteConfig']->site_ads=='on' && config('app.env')!='local')
+    @section('ads')
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "ca-pub-6739685874678212",
+                enable_page_level_ads: true
+            });
+        </script>
+    @endsection
+@endif
 @section('content')
     <div class="container-scroller">
         @include('partials.navbar')
@@ -11,7 +22,7 @@
                     <div class="card">
                         <div class="card-body">
                             <p class="card-description">
-                                Bộ tài liệu lưu trữ thông tin sản phẩm, dịch vụ, phương tiện, ngành nghề thuộc các lĩnh vực, các khu vực, các quốc gia!</p>
+                                @if(!empty($channel['siteConfig']->site_description)){!! $channel['siteConfig']->site_description !!}@endif</p>
                             <h3 class="card-title">Từ khóa mới cập nhật</h3>
                             @if(count($newKeyword))
                                 @foreach($newKeyword as $item)

@@ -1,8 +1,25 @@
+<?php
+$ads='false';
+if(!empty($channel['siteConfig']->site_ads) && $channel['siteConfig']->site_ads=='on'){
+    $ads='true';
+}
+?>
 @extends('layouts.default')
 @section('title', $site['title'])
 @section('description', $site['description'])
 @section('setCanonical', route('site.show',array($site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))))
 @include('includes.header.css.css_default')
+@if($ads=='true' && config('app.env')!='local')
+    @section('ads')
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "ca-pub-6739685874678212",
+                enable_page_level_ads: true
+            });
+        </script>
+    @endsection
+@endif
 @section('content')
     <div class="container-scroller">
         @include('partials.navbar')
@@ -53,7 +70,7 @@
                                 </div>
                             </div>
                             <ul class="list-group">
-                                @include('partials.site.listSite', ['sites' => $siteRelate,'showDomain'=>false,'ads'=>'false'])
+                                @include('partials.site.listSite', ['sites' => $siteRelate,'showDomain'=>false,'ads'=>$ads])
                             </ul>
                         </div>
                     @endif
