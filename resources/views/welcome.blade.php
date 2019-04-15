@@ -23,7 +23,7 @@
                         <div class="card-body">
                             <p class="card-description">
                                 @if(!empty($channel['siteConfig']->site_description)){!! $channel['siteConfig']->site_description !!}@endif</p>
-                            <h3 class="card-title">Từ khóa mới cập nhật</h3>
+                            <h3 class="card-title">@lang('base.keyword_new_update')</h3>
                             @if(count($newKeyword))
                                 @foreach($newKeyword as $item)
                                     <a class="badge badge-secondary mb-1" href="{!! route('keyword.show.id',array($item['_id'],str_slug(mb_substr($item['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $item['keyword'] !!}</a>

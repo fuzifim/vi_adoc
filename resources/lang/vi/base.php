@@ -24,6 +24,7 @@ return [
     'is'=>'là',
     'views'=>'Lượt xem',
     'keyword_relate_for'=>'Từ khóa liên quan đến',
+    'keyword_new_update'=>'Từ khóa mới cập nhật',
     'visit_to_site'=>'Truy cập vào trang',
     'tag_info_for'=>'Các thẻ cho',
     'header_info'=>'Thông tin header',
