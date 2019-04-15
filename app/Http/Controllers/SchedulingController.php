@@ -11,6 +11,7 @@ use Cache;
 use Storage;
 use File;
 use AppHelper;
+use App\Model\Mongo_domain;
 
 class SchedulingController extends Controller
 {
@@ -580,10 +581,12 @@ class SchedulingController extends Controller
         }
     }
     public function getIpRecord(){
-        $getDomain=DB::connection('mongodb')->collection('mongo_domain')
-            ->where('craw_next','ip')
-            ->limit(3)->get();
-        foreach ($getDomain as $domain){
+        $getDomain=Mongo_domain::
+        raw(function($collection){ return $collection->aggregate([ ['$sample' => ['size' => 3]] ]); })
+            ->where('craw_next','ip');
+        foreach ($getDomain as $item){
+            $domain=DB::connection('mongodb')->collection('mongo_domain')
+                ->where('_id',$item->id)->first();
             $this->_domain=$domain['domain'];
             if(empty($domain['attribute']['dns_record'])){
                 $result=$this->getIpDomain();
@@ -645,10 +648,12 @@ class SchedulingController extends Controller
         }
     }
     public function getRankDomain(){
-        $getDomain=DB::connection('mongodb')->collection('mongo_domain')
-            ->where('craw_next','rank')
-            ->limit(3)->get();
-        foreach ($getDomain as $domain){
+        $getDomain=Mongo_domain::
+        raw(function($collection){ return $collection->aggregate([ ['$sample' => ['size' => 3]] ]); })
+            ->where('craw_next','rank');
+        foreach ($getDomain as $item){
+            $domain=DB::connection('mongodb')->collection('mongo_domain')
+                ->where('_id',$item->id)->first();
             $this->_domain=$domain['domain'];
             $result=$this->getRank();
             if($result['result']=='error'){
@@ -660,7 +665,7 @@ class SchedulingController extends Controller
                         'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                         'craw_next'=>'ip'
                     ]);
-                echo $domain['domain'].' error';
+                echo 'Craw rank '. $domain['domain'].' error <p>';
             }else if($result['result']=='success'){
                 $domainAttribute=$domain['attribute'];
                 $noteMer=array('rank'=>$result['rank'],'rank_country'=>$result['rank_country'],'country_code'=>$result['country_code']);
@@ -675,15 +680,22 @@ class SchedulingController extends Controller
                         'attribute'=>$domainAttribute,
                         'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
                     ]);
-                echo $domain['domain'].' success';
+                echo 'Craw rank '.$domain['domain'].' success <p>';
             }
         }
     }
     public function getWhoisDomain(){
-        $getDomain=DB::connection('mongodb')->collection('mongo_domain')
-            ->where('craw_next','whois')
-            ->limit(3)->get();
-        foreach ($getDomain as $domain){
+        $getDomain=Mongo_domain::
+        raw(function($collection){ return $collection->aggregate([ ['$sample' => ['size' => 3]] ]); })
+            ->where('craw_next','whois');
+//        $getDomain=DB::connection('mongodb')->collection('mongo_domain')
+//            ->where('craw_next','whois')
+//            ->limit(3)->get();
+//        dd($getDomain);
+        foreach ($getDomain as $item){
+            $domain=DB::connection('mongodb')->collection('mongo_domain')
+                ->where('_id',$item->id)->first();
+            dd($domain);
             if(empty($domain['attribute']['whois'])){
                 $this->_domain=$domain['domain'];
                 $result=$this->getWhois();
@@ -701,6 +713,7 @@ class SchedulingController extends Controller
                             'attribute'=>$domainAttribute,
                             'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
                         ]);
+                    echo 'craw whois domain '.$domain['domain'].'<p>';
                 }else if($result['result']=='error'){
                     DB::connection('mongodb')->collection('mongo_domain')
                         ->where('base_64',base64_encode($domain['domain']))
@@ -711,6 +724,7 @@ class SchedulingController extends Controller
                             'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                             'craw_next'=>'rank'
                         ]);
+                    echo 'craw error whois domain '.$domain['domain'].'<p>';
                 }
             }else{
                 DB::connection('mongodb')->collection('mongo_domain')
@@ -721,14 +735,17 @@ class SchedulingController extends Controller
                         'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                         'craw_next'=>'rank'
                     ]);
+                echo 'craw exist whois domain '.$domain['domain'].'<p>';
             }
         }
     }
     public function crawInfoDomain(){
-        $getDomain=DB::connection('mongodb')->collection('mongo_domain')
-            ->where('craw_next','exists',false)
-            ->limit(3)->get();
-        foreach($getDomain as $domain){
+        $getDomain=Mongo_domain::
+        raw(function($collection){ return $collection->aggregate([ ['$sample' => ['size' => 3]] ]); })
+            ->where('craw_next','exists',false);
+        foreach($getDomain as $item){
+            $domain=DB::connection('mongodb')->collection('mongo_domain')
+                ->where('_id',$item->id)->first();
             $this->_domain=$domain['domain'];
             $result=$this->getInfoSite();
             if($result['result']=='error'){
@@ -742,6 +759,7 @@ class SchedulingController extends Controller
                         'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                         'craw_next'=>'whois'
                     ]);
+                echo 'update eror domain '.$domain['domain'].'<p>';
             }else if($result['result']=='active'){
                 $domainAttribute=$domain['attribute'];
                 if(empty($domain['attribute']['ads'])){
@@ -772,6 +790,7 @@ class SchedulingController extends Controller
                         'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                         'attribute'=>$domainAttribute
                     ]);
+                echo 'update info domain: '.$domain['domain'].'<p>';
             }
         }
     }
