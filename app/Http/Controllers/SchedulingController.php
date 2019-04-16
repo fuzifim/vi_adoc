@@ -695,7 +695,6 @@ class SchedulingController extends Controller
         foreach ($getDomain as $item){
             $domain=DB::connection('mongodb')->collection('mongo_domain')
                 ->where('_id',$item->id)->first();
-            dd($domain);
             if(empty($domain['attribute']['whois'])){
                 $this->_domain=$domain['domain'];
                 $result=$this->getWhois();
