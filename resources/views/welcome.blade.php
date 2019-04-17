@@ -38,3 +38,6 @@
     </div>
 @endsection
 @include('includes.footer.script.script_default')
+@section('google_analytics')
+    @include('includes.footer.script.google_analytics')
+@endsection

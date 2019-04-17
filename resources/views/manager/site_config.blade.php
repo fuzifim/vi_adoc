@@ -45,6 +45,10 @@
                                         <label for="webmaster_tools">Webmaster tools</label>
                                         <input type="text" class="form-control" name="webmaster_tools" id="webmaster_tools" placeholder="webmaster_tools" @if(!empty($siteConfig->webmaster_tools)) value="{!! $siteConfig->webmaster_tools !!}"@endif>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="google_analytics_account">Google Analytics Id</label>
+                                        <input type="text" class="form-control" name="google_analytics_account" id="google_analytics_account" placeholder="google_analytics_account" @if(!empty($siteConfig->google_analytics_account)) value="{!! $siteConfig->google_analytics_account !!}"@endif>
+                                    </div>
                                     <div class="form-check form-check-primary">
                                         <label class="form-check-label">
                                             <input type="checkbox" name="site_ads" class="form-check-input" @if(!empty($siteConfig->site_ads))checked=""@endif>

@@ -31,6 +31,7 @@ class ManagerController extends ConstructController
                 'site_url'=>$request->site_url,
                 'site_lang'=>$request->site_lang,
                 'webmaster_tools'=>$request->webmaster_tools,
+                'google_analytics_account'=>$request->google_analytics_account,
                 'site_ads'=>$request->site_ads,
                 'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')

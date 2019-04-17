@@ -31,5 +31,7 @@
 @show
 @section('footer_script')
 @show
+@section('google_analytics')
+@show
 </body>
 </html>
