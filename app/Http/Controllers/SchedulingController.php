@@ -467,6 +467,8 @@ class SchedulingController extends Controller
                                         $siteId=DB::connection('mongodb')->collection('mongo_site')
                                             ->insertGetId(
                                                 [
+                                                    'parent'=>$item['keyword'],
+                                                    'parent_id'=>(string)$item['_id'],
                                                     'title' => $title,
                                                     'base_64' => base64_encode($title),
                                                     'title_full'=>AppHelper::instance()->convertToUTF8($data['title']),
