@@ -105,7 +105,7 @@
                             @if($showListVideo==1)
                                 <div class="row row-pad-5">
                                     <div class="col-md-9">
-                                        @include('partials.keyword.listSite', ['keyword' => $keyword,'ads'=>$ads])
+                                        @include('partials.keyword.listVideo_1', ['keyword' => $keyword,'from'=>0,'to'=>4])
                                         @if($ads=='true' && config('app.env')!='local')
                                             <div class="form-group">
                                                 <ins class="adsbygoogle"
@@ -118,8 +118,8 @@
                                                 </script>
                                             </div>
                                         @endif
-                                        @include('partials.keyword.listVideo_1', ['keyword' => $keyword,'from'=>0,'to'=>4])
                                         @include('partials.keyword.listVideo_2', ['keyword' => $keyword,'from'=>4,'to'=>4])
+                                        @include('partials.keyword.listSite', ['keyword' => $keyword,'ads'=>$ads])
                                     </div>
                                     <div class="col-md-3">
                                         @include('partials.keyword.listVideo_3', ['keyword' => $keyword,'from'=>8,'to'=>12])

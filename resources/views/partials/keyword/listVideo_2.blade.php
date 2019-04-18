@@ -7,7 +7,7 @@
                     ->where('_id', (string)$videoRelate)->first();
                 ?>
                 @if(!empty($video['title']))
-                    <div class="col-md-3 col-xs-3">
+                    <div class="col-md-3">
                         <a href="{!! route('video.show.id',array($video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><img class="mx-auto d-block" src="{!! $video['thumb'] !!}" alt="{!! $video['title'] !!}" title="{!! $video['title'] !!}"></a>
                         <?php
                         if ($video['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
